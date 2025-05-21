@@ -2,6 +2,7 @@ package ch.prixio.controllers;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 
