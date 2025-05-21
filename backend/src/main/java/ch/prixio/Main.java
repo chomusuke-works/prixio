@@ -7,6 +7,9 @@ import ch.prixio.controllers.ProductController;
 
 public class Main {
 	private static final int PORT = 8080;
+	private final String POSTGRES_USER = System.getenv("POSTGRES_USER");
+	private final String POSTGRES_PASSWORD = System.getenv("POSTGRES_PASSWORD");
+	private final String DB_URL = System.getenv("DB_URL");
 
 	public static void main(String[] args) {
 		var productController = new ProductController();
