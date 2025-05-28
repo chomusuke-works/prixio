@@ -9,16 +9,18 @@ function App() {
         quantity: 4,
         unit: "Unit",
         priceHistory: [
-            { supermarket: "Supermarket1", date: [2025, 1, 1], price: 10 },
-            { supermarket: "Supermarket2", date: [2025, 1, 2], price: 20 },
-            { supermarket: "Supermarket1", date: [2025, 1, 3], price: 15 },
-            { supermarket: "Supermarket2", date: [2025, 1, 4], price: 25 },
-            { supermarket: "Supermarket1", date: [2025, 1, 5], price: 15 },
-            { supermarket: "Supermarket2", date: [2025, 1, 6], price: 25 },
-            { supermarket: "Supermarket1", date: [2025, 1, 7], price: 10 },
-            { supermarket: "Supermarket2", date: [2025, 1, 8], price: 28 },
-            { supermarket: "Supermarket1", date: [2025, 1, 9], price: 18 },
-            { supermarket: "Supermarket2", date: [2025, 1, 10], price: 21 }
+            { supermarket: "Supermarket1", date: new Date(2025, 0, 1), price: 8.5 },
+            { supermarket: "Supermarket2", date: new Date(2025, 0, 3), price: 15.0 },
+            { supermarket: "Supermarket1", date: new Date(2025, 0, 15), price: 18.2 },
+            { supermarket: "Supermarket2", date: new Date(2025, 1, 2), price: 10.8 },
+            { supermarket: "Supermarket1", date: new Date(2025, 1, 20), price: 22.5 },
+            { supermarket: "Supermarket2", date: new Date(2025, 2, 5), price: 19.7 },
+            { supermarket: "Supermarket1", date: new Date(2025, 2, 28), price: 12.9 },
+            { supermarket: "Supermarket2", date: new Date(2025, 3, 10), price: 24.1 },
+            { supermarket: "Supermarket1", date: new Date(2025, 3, 25), price: 25.3 },
+            { supermarket: "Supermarket2", date: new Date(2025, 4, 7), price: 13.0 },
+            { supermarket: "Supermarket1", date: new Date(2025, 4, 20), price: 16.2 },
+            { supermarket: "Supermarket2", date: new Date(2025, 4, 20), price: 21.4 }
         ]
     };
 

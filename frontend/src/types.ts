@@ -1,6 +1,6 @@
 export type PriceObservation = {
     supermarket: string;
-    date: number[];
+    date: Date;
     price: number;
 };
 
