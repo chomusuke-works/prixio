@@ -4,10 +4,12 @@
   "description": "",
   "license": "ISC",
   "author": "",
-  "main": "src/index.js",
+  "main": "src/index.tsx",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "react-scripts start"
+    "start": "react-scripts start",
+    "lint": "eslint . --ext .js,.ts,.tsx --fix",
+    "format": "prettier --write '**/*.{js,ts,tsx,css,html,json,md}'"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -25,7 +27,11 @@
   },
   "devDependencies": {
     "@types/prop-types": "^15.7.14",
-    "@types/react": "^19.1.5"
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.5",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "typescript": "^5.1.6"
   },
   "browserslist": {
     "production": [
