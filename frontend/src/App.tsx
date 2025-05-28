@@ -1,14 +1,18 @@
 import ProductDisplay from './components/Product';
 import Homepage from './components/Homepage';
+import Footer from './components/Footer';
 import {Product, ProductWithPriceChange} from './types';
+import Header from "./components/Header";
 
 function App() {
 
 
     return (
         <div>
-            <Homepage cheaperProducts={cheaperProducts} pricierProducts={pricierProducts} />
-            {/* <ProductDisplay {...defaultProduct} /> */}
+            <Header />
+            {/* <Homepage cheaperProducts={cheaperProducts} pricierProducts={pricierProducts} /> */}
+            <ProductDisplay {...defaultProduct} />
+            <Footer />
         </div>
 );
 }
