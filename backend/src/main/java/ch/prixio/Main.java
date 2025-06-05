@@ -2,10 +2,7 @@ package ch.prixio;
 
 import ch.prixio.controllers.ProductController;
 import ch.prixio.controllers.ObservationController;
-import ch.prixio.daos.ObservationDAO;
 
-import ch.prixio.daos.ProductDAO;
-import ch.prixio.datatypes.Product;
 import io.javalin.Javalin;
 
 import java.sql.Connection;
@@ -29,7 +26,7 @@ public class Main {
 		var productController = new ProductController(connection);
 		var observationController = new ObservationController();
 
-		var app = Javalin.create()
+		Javalin.create()
 			.get("/product/{ean}", productController::getProduct)
 			.post("/record/{ean}", observationController::registerPriceObservation)
 			.get("/top/price-down", (Context) -> {})
