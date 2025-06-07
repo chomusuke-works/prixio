@@ -26,7 +26,8 @@ function ProductDisplay(product: Readonly<Product>): JSX.Element {
             </p>
           </div>
           <div className="mt-3 mt-md-0">
-            <AddObservation />
+            {/* TODO : Appel API de la liste des supermarchés possibles*/}
+            <AddObservation supermarketList={["Migros", "Coop", "Manor"]} />
           </div>
         </div>
         <div className="bg-light rounded-4 shadow-sm p-4">
