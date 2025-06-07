@@ -1,14 +1,14 @@
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import SearchIcon from "@mui/icons-material/Search";
-import { JSX } from "react";
+import { JSX, useState, useEffect } from "react";
 
 import { ProductWithPriceChange } from "../types";
 
 type HomepageProps = Readonly<{
   cheaperProducts: ProductWithPriceChange[];
   pricierProducts: ProductWithPriceChange[];
-  onSelectProduct: (product: ProductWithPriceChange) => void;
+  onSelectProduct: (ean: number) => void;
 }>;
 
 function Homepage({
@@ -16,16 +16,41 @@ function Homepage({
   pricierProducts,
   onSelectProduct,
 }: HomepageProps): JSX.Element {
+  const [search, setSearch] = useState("");
+  const [results, setResults] = useState<ProductWithPriceChange[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (search.trim().length < 2) {
+      setResults([]);
+      return;
+    }
+    const timeout = setTimeout(() => {
+      setLoading(true);
+      fetch(`/product/${encodeURIComponent(search)}`)
+        .then((res) => res.json())
+        .then((data: ProductWithPriceChange[]) => setResults(data.slice(0, 10))) // Number of results limited to 10
+        .finally(() => setLoading(false));
+    }, 400);
+    return () => clearTimeout(timeout);
+  }, [search]);
+
   return (
     <div className="min-vh-80 bg-secondary">
       {/* Search */}
       <section className="py-3 bg-secondary">
-        <div className="container">
-          <form className="input-group mx-auto w-50">
+        <div className="container position-relative">
+          <form
+            className="input-group mx-auto w-50"
+            onSubmit={(e): void => e.preventDefault()}
+            autoComplete="off"
+          >
             <input
               type="text"
               className="form-control text-dark rounded-start-pill"
               placeholder="Rechercher un produit..."
+              value={search}
+              onChange={(e): void => setSearch(e.target.value)}
             />
             <button
               className="btn btn-primary text-dark rounded-end-pill bg-primary fw-bold border-0"
@@ -35,6 +60,40 @@ function Homepage({
               Rechercher
             </button>
           </form>
+          {search.trim().length > 1 && (
+            <div
+              className="position-absolute bg-white shadow rounded w-50"
+              style={{ zIndex: 10, left: "50%", transform: "translateX(-50%)" }}
+            >
+              {loading ? (
+                <div className="p-2 text-center">Recherche...</div>
+              ) : results.length === 0 ? (
+                <div className="p-2 text-center text-muted">Aucun résultat</div>
+              ) : (
+                <ul className="list-group list-group-flush">
+                  {results.map((product) => (
+                    <li
+                      key={product.ean}
+                      className="list-group-item list-group-item-action"
+                      style={{ cursor: "pointer" }}
+                      tabIndex={0}
+                      role="button"
+                      onClick={(): void => onSelectProduct(product.ean)}
+                      onKeyDown={(e): void => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          onSelectProduct(product.ean);
+                        }
+                      }}
+                    >
+                      <span className="fw-bold">{product.name}</span>{" "}
+                      <span className="text-muted">{product.brand}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
         </div>
       </section>
 
@@ -57,7 +116,7 @@ function Homepage({
                 <ProductCard
                   {...product}
                   cheaper={true}
-                  onClick={(): void => onSelectProduct(product)}
+                  onClick={(): void => onSelectProduct(product.ean)}
                 />
               </div>
             ))
@@ -84,7 +143,7 @@ function Homepage({
                 <ProductCard
                   {...product}
                   cheaper={false}
-                  onClick={(): void => onSelectProduct(product)}
+                  onClick={(): void => onSelectProduct(product.ean)}
                 />
               </div>
             ))
