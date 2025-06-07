@@ -5,7 +5,14 @@ import type { Product } from "../types";
 import AddObservation from "./AddObservation";
 import Chart from "./Chart";
 
-function ProductDisplay(product: Readonly<Product>): JSX.Element {
+type ProductDisplayProps = Readonly<Product> & {
+  onBack: () => void;
+};
+
+function ProductDisplay({
+  onBack,
+  ...product
+}: ProductDisplayProps): JSX.Element {
   const now = new Date();
   const oneYearAgo = new Date(
     now.getFullYear() - 1,
@@ -17,6 +24,13 @@ function ProductDisplay(product: Readonly<Product>): JSX.Element {
   return (
     <div className="min-vh-80 bg-secondary py-5">
       <section className="container">
+        <button
+          className="btn btn-outline-secondary mb-3"
+          onClick={onBack}
+          type="button"
+        >
+          ← Retour
+        </button>
         <div className="d-flex flex-column flex-md-row align-items-start justify-content-between mb-4">
           <div>
             <h1 className="display-4 fw-bold text-dark mb-2">{product.name}</h1>
@@ -26,7 +40,6 @@ function ProductDisplay(product: Readonly<Product>): JSX.Element {
             </p>
           </div>
           <div className="mt-3 mt-md-0">
-            {/* TODO : Appel API de la liste des supermarchés possibles*/}
             <AddObservation supermarketList={["Migros", "Coop", "Manor"]} />
           </div>
         </div>

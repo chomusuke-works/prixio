@@ -5,19 +5,17 @@ import { JSX } from "react";
 
 import { ProductWithPriceChange } from "../types";
 
-/**
- * Homepage component that displays a list of products with their price changes.
- *
- * @param cheaperProducts – List of products that have become cheaper this week.
- * @param pricierProducts – List of products that have become pricier this week.
- */
+type HomepageProps = Readonly<{
+  cheaperProducts: ProductWithPriceChange[];
+  pricierProducts: ProductWithPriceChange[];
+  onSelectProduct: (product: ProductWithPriceChange) => void;
+}>;
+
 function Homepage({
   cheaperProducts,
   pricierProducts,
-}: Readonly<{
-  cheaperProducts: ProductWithPriceChange[];
-  pricierProducts: ProductWithPriceChange[];
-}>): JSX.Element {
+  onSelectProduct,
+}: HomepageProps): JSX.Element {
   return (
     <div className="min-vh-80 bg-secondary">
       {/* Search */}
@@ -56,7 +54,11 @@ function Homepage({
           ) : (
             cheaperProducts.map((product) => (
               <div className="col" key={product.ean}>
-                <ProductCard {...product} cheaper={true} />
+                <ProductCard
+                  {...product}
+                  cheaper={true}
+                  onClick={(): void => onSelectProduct(product)}
+                />
               </div>
             ))
           )}
@@ -79,7 +81,11 @@ function Homepage({
           ) : (
             pricierProducts.map((product) => (
               <div className="col" key={product.ean}>
-                <ProductCard {...product} cheaper={false} />
+                <ProductCard
+                  {...product}
+                  cheaper={false}
+                  onClick={(): void => onSelectProduct(product)}
+                />
               </div>
             ))
           )}
@@ -89,16 +95,32 @@ function Homepage({
   );
 }
 
+type ProductCardProps = Readonly<ProductWithPriceChange> & {
+  cheaper: boolean;
+  onClick: () => void;
+};
+
 /**
  * ProductCard component that displays a single product with its price change information.
  *
+ * @param onClick - Callback function to handle click events on the product card.
  * @param product - The product data to display, including its name, brand, quantity, unit, and price change details.
  */
-function ProductCard(
-  product: Readonly<ProductWithPriceChange> & { cheaper: boolean },
-): JSX.Element {
+function ProductCard({ onClick, ...product }: ProductCardProps): JSX.Element {
   return (
-    <div className="product-card card mb-3 shadow-sm">
+    <div
+      className="product-card card mb-3 shadow-sm"
+      style={{ cursor: "pointer" }}
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>): void => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+    >
       <div className="card-body">
         <h5 className="card-title mb-1 text-dark">{product.name}</h5>
         <h6 className="card-subtitle mb-2 text-dark">{product.brand}</h6>
