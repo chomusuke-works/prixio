@@ -8,18 +8,22 @@ import { Product, ProductWithPriceChange } from "./types";
 
 function App(): JSX.Element {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [cheaperProducts, setCheaperProducts] = useState<ProductWithPriceChange[]>([]);
-  const [pricierProducts, setPricierProducts] = useState<ProductWithPriceChange[]>([]);
+  const [cheaperProducts, setCheaperProducts] = useState<
+    ProductWithPriceChange[]
+  >([]);
+  const [pricierProducts, setPricierProducts] = useState<
+    ProductWithPriceChange[]
+  >([]);
 
   useEffect(() => {
-    fetch('/top/price-down')
-        .then((res) => res.json())
-        .then((data) => setCheaperProducts(data as ProductWithPriceChange[]))
-        .catch(() => setCheaperProducts([]));
-    fetch('/top/price-up')
-        .then((res) => res.json())
-        .then((data) => setPricierProducts(data as ProductWithPriceChange[]))
-        .catch(() => setCheaperProducts([]));
+    fetch("/top/price-down")
+      .then((res) => res.json())
+      .then((data) => setCheaperProducts(data as ProductWithPriceChange[]))
+      .catch(() => setCheaperProducts([]));
+    fetch("/top/price-up")
+      .then((res) => res.json())
+      .then((data) => setPricierProducts(data as ProductWithPriceChange[]))
+      .catch(() => setCheaperProducts([]));
   }, []);
 
   return (
@@ -36,9 +40,9 @@ function App(): JSX.Element {
           pricierProducts={pricierProducts}
           onSelectProduct={(ean): void => {
             fetch(`/product/${ean}`)
-                .then((res) => res.json())
-                .then((fullProduct) => setSelectedProduct(fullProduct as Product))
-                .catch(() => setSelectedProduct(null));
+              .then((res) => res.json())
+              .then((fullProduct) => setSelectedProduct(fullProduct as Product))
+              .catch(() => setSelectedProduct(null));
           }}
         />
       )}

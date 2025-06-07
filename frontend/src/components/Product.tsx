@@ -40,7 +40,10 @@ function ProductDisplay({
             </p>
           </div>
           <div className="mt-3 mt-md-0">
-            <AddObservation supermarketList={["Migros", "Coop", "Manor"]} />
+            <AddObservation
+              supermarketList={["Migros", "Coop", "Manor"]}
+              ean={product.ean}
+            />
           </div>
         </div>
         <div className="bg-light rounded-4 shadow-sm p-4">

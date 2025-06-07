@@ -3,10 +3,12 @@ import React, { useState, JSX } from "react";
 
 function AddObservation({
   supermarketList,
-}: Readonly<{ supermarketList: string[] }>): JSX.Element {
+  ean,
+}: Readonly<{ supermarketList: string[]; ean: number }>): JSX.Element {
   const [selectedSupermarket, setSelectedSupermarket] = useState("");
   const [showNewSupermarketInput, setShowNewSupermarketInput] = useState(false);
   const [newSupermarket, setNewSupermarket] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSupermarketChange = (
     e: React.ChangeEvent<HTMLSelectElement>,
@@ -14,6 +16,48 @@ function AddObservation({
     const value = e.target.value;
     setSelectedSupermarket(value);
     setShowNewSupermarketInput(value === "__add_new__");
+  };
+
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> => {
+    e.preventDefault();
+    setLoading(true);
+
+    let supermarket = selectedSupermarket;
+    if (showNewSupermarketInput && newSupermarket.trim()) {
+      const res = await fetch("/new/supermarket", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newSupermarket.trim() }),
+      });
+      if (!res.ok) {
+        setLoading(false);
+        return;
+      }
+      supermarket = newSupermarket.trim();
+    }
+
+    const formData = new FormData(e.currentTarget);
+    const price = formData.get("price");
+    const date = formData.get("date");
+
+    const recordRes = await fetch(`/record/${ean}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        supermarket,
+        price: Number(price),
+        date,
+      }),
+    });
+
+    setLoading(false);
+
+    if (!recordRes.ok) {
+      return;
+    }
+
   };
 
   return (
@@ -36,7 +80,11 @@ function AddObservation({
       >
         <div className="modal-dialog">
           <div className="modal-content bg-light">
-            <form>
+            <form
+              onSubmit={(e): void => {
+                void handleSubmit(e);
+              }}
+            >
               <div className="modal-header border-0">
                 <h5
                   className="modal-title text-dark fw-bold"
@@ -87,14 +135,15 @@ function AddObservation({
                   )}
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="prix" className="form-label text-dark">
+                  <label htmlFor="price" className="form-label text-dark">
                     Prix (CHF)
                   </label>
                   <input
                     type="number"
                     step="0.05"
                     className="form-control rounded-pill"
-                    id="prix"
+                    id="price"
+                    name="price"
                     required
                   />
                 </div>
@@ -106,6 +155,7 @@ function AddObservation({
                     type="date"
                     className="form-control rounded-pill"
                     id="date"
+                    name="date"
                     required
                   />
                 </div>
@@ -115,15 +165,16 @@ function AddObservation({
                   type="button"
                   className="btn btn-secondary rounded-pill px-3"
                   data-bs-dismiss="modal"
+                  disabled={loading}
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
                   className="btn btn-primary text-dark fw-bold rounded-pill px-4"
+                  disabled={loading}
                 >
-                  {/* TODO : Appel API pour ajouter le produit à partie du formulaire. Vérifier s'il faut aussi ajouter un nouveau supermarché */}
-                  Enregistrer
+                  {loading ? "Enregistrement..." : "Enregistrer"}
                 </button>
               </div>
             </form>
