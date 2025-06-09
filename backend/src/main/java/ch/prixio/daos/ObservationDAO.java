@@ -14,28 +14,44 @@ public class ObservationDAO extends DAO {
 	}
 
 	public List<Observation> getObservations(String productEan) {
-		List<Observation> observations = new LinkedList<>();
-
 		try {
 			String query = "SELECT * FROM observation WHERE product_ean = ?;";
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setString(1, productEan);
-			ResultSet resultSet = statement.executeQuery();
-
-			while (resultSet.next()) {
-				Observation observation = new Observation(
-					productEan,
-					new Supermarket(resultSet.getString("supermarket_name")),
-					resultSet.getDate("date").toLocalDate(),
-					resultSet.getDouble("price")
-				);
-
-				observations.add(observation);
-			}
+			return getObservationsWithStatement(statement);
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
 
 			return Collections.emptyList();
+		}
+	}
+
+	/**
+	 * Fetches all observations for all products, sorting by date beginning from the latest.
+	 *
+	 * @return a list of observations
+	 * @throws SQLException if a database access error occurs
+	 */
+	public List<Observation> getAllObservations() throws SQLException {
+		String query = "SELECT * FROM observation ORDER BY product_ean, date DESC;";
+		PreparedStatement statement = connection.prepareStatement(query);
+		return getObservationsWithStatement(statement);
+	}
+
+	private List<Observation> getObservationsWithStatement(PreparedStatement statement) throws SQLException {
+		List<Observation> observations = new LinkedList<>();
+
+		ResultSet resultSet = statement.executeQuery();
+
+		while (resultSet.next()) {
+			Observation observation = new Observation(
+				resultSet.getString("product_ean"),
+				new Supermarket(resultSet.getString("supermarket_name")),
+				resultSet.getDate("date").toLocalDate(),
+				resultSet.getDouble("price")
+			);
+
+			observations.add(observation);
 		}
 
 		return observations;
