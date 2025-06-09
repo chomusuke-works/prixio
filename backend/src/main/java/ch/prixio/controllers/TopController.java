@@ -9,6 +9,7 @@ import ch.prixio.datatypes.Product;
 import ch.prixio.datatypes.ProductWithPriceChange;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -25,21 +26,34 @@ public class TopController {
 	}
 
 	public void getTopUp(Context ctx) {
-		ctx.status(HttpStatus.NOT_IMPLEMENTED);
-
-		List<Observation> observations;
-		try {
-			observations = this.observationDAO.getAllObservations();
-		} catch (SQLException e) {
-			ctx.status(HttpStatus.INTERNAL_SERVER_ERROR);
-
-			throw new RuntimeException(e);
-		}
-
-		BoundedPriorityQueue<Pair<String, PriceChange>> topUp = new BoundedPriorityQueue<>(
-			MAX_TOP_COUNT,
+		BoundedPriorityQueue<Pair<String, PriceChange>> topUp = getTopObservations(
+			observationDAO,
 			(a, b) -> (int) Math.signum(a.getSecond().getPriceChange() - b.getSecond().getPriceChange())
 		);
+		List<ProductWithPriceChange> finalList = joinProductToPriceChanges(topUp, productDAO);
+
+		ctx.json(finalList);
+	}
+
+	public void getTopDown(Context ctx) {
+		ctx.status(HttpStatus.NOT_IMPLEMENTED);
+	}
+
+	@NotNull
+	private static BoundedPriorityQueue<Pair<String, PriceChange>> getTopObservations(
+		ObservationDAO dataSource,
+		Comparator<Pair<String, PriceChange>> comparator
+	) {
+		BoundedPriorityQueue<Pair<String, PriceChange>> top = new BoundedPriorityQueue<>(
+			MAX_TOP_COUNT,
+			comparator
+		);
+		List<Observation> observations;
+		try {
+			observations = dataSource.getAllObservations();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 
 		int i = 0;
 		String lastEan;
@@ -51,25 +65,24 @@ public class TopController {
 			if (a.ean().equals(b.ean())) {
 				PriceChange c = new PriceChange(b.price(), a.price());
 				Pair<String, PriceChange> pair = new Pair<>(b.ean(), c);
-				topUp.offer(pair);
+				top.offer(pair);
 			}
 			while (i < observations.size() && observations.get(i).ean().equals(lastEan)) ++i;  // Advance to the next product
 		}
 
-		List<ProductWithPriceChange> finalList = topUp.stream()
+		return top;
+	}
+
+	private static List<ProductWithPriceChange> joinProductToPriceChanges(BoundedPriorityQueue<Pair<String, PriceChange>> pairs, ProductDAO dataSource) throws NoSuchElementException{
+		return pairs.stream()
 			.map((pair) -> {
-				Optional<Product> product = this.productDAO.getByEan(pair.getFirst());
+				Optional<Product> product = dataSource.getByEan(pair.getFirst());
 				if (product.isPresent()) {
 					return new ProductWithPriceChange(product.get(), pair.getSecond());
 				}
 
-				throw new RuntimeException("No product found with ean " + pair.getFirst());
+				throw new NoSuchElementException("No product found with ean " + pair.getFirst());
 			})
 			.toList();
-		ctx.json(finalList);
-	}
-
-	public void getTopDown(Context ctx) {
-		ctx.status(HttpStatus.NOT_IMPLEMENTED);
 	}
 }
