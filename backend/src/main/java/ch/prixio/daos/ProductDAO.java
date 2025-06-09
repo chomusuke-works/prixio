@@ -1,6 +1,5 @@
 package ch.prixio.daos;
 
-import ch.prixio.datatypes.Observation;
 import ch.prixio.datatypes.Product;
 import ch.prixio.datatypes.Unit;
 
@@ -48,8 +47,7 @@ public class ProductDAO extends DAO {
 				resultSet.getString("name"),
 				resultSet.getString("brand"),
 				resultSet.getInt("quantity"),
-				unit,
-				new Observation[0]
+				unit
 			);
 
 			return Optional.of(product);

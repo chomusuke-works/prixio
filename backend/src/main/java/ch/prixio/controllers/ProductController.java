@@ -2,10 +2,13 @@ package ch.prixio.controllers;
 
 import java.sql.Connection;
 import java.util.List;
+import java.util.Optional;
 
 import ch.prixio.daos.ObservationDAO;
 import ch.prixio.daos.ProductDAO;
 import ch.prixio.datatypes.Observation;
+import ch.prixio.datatypes.Product;
+import ch.prixio.datatypes.ProductWithPriceHistory;
 import io.javalin.http.Context;
 
 import io.javalin.http.HttpStatus;
@@ -22,13 +25,23 @@ public class ProductController {
 
 	public void getProduct(Context ctx) {
 		String productEan = ctx.pathParam("ean");
-		this.productDAO.getByEan(productEan).ifPresentOrElse(
-			product -> {
-				List<Observation> observations = this.observationDAO.getObservations(productEan);
+		Optional<Product> product = productDAO.getByEan(productEan);
+		if (product.isPresent()) {
+			ctx.json(product.get());
+		} else {
+			ctx.status(HttpStatus.NOT_FOUND);
+		}
+	}
 
-				ctx.json(product.withPriceHistory(observations));
-			},
-			() -> ctx.status(HttpStatus.NOT_FOUND)
-		);
+	public void getProductWithPriceHistory(Context ctx) {
+		String productEan = ctx.pathParam("ean");
+		Optional<Product> product = this.productDAO.getByEan(productEan);
+		if (product.isPresent()) {
+			List<Observation> observations = this.observationDAO.getObservations(productEan);
+
+			ctx.json(new ProductWithPriceHistory(product.get(), observations));
+		} else {
+			ctx.status(HttpStatus.NOT_FOUND);
+		}
 	}
 }
