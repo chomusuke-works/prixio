@@ -3,6 +3,7 @@ package ch.prixio;
 import ch.prixio.controllers.ProductController;
 import ch.prixio.controllers.ObservationController;
 
+import ch.prixio.controllers.SupermarketController;
 import io.javalin.Javalin;
 
 import java.sql.Connection;
@@ -24,13 +25,16 @@ public class Main {
 		System.out.printf("Connected to database at: %s\n", POSTGRES_URL);
 
 		var productController = new ProductController(connection);
+		var supermarketController = new SupermarketController(connection);
 		var observationController = new ObservationController();
 
-		Javalin.create()
-			.get("/product/{ean}", productController::getProduct)
+		Javalin app = Javalin.create();
+
+		app.get("/product/{ean}", productController::getProduct)
 			.post("/record/{ean}", observationController::registerPriceObservation)
 			.get("/top/price-down", (Context) -> {})
 			.get("/top/price-up", (Context) -> {})
+			.post("/supermarket", supermarketController::createSupermarket)
 			.start(PORT);
 	}
 }
