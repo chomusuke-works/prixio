@@ -3,13 +3,19 @@ CREATE TABLE supermarket (
     CONSTRAINT PK_supermarket PRIMARY KEY (name)
 );
 
+CREATE TABLE unit (
+    name VARCHAR(10) NOT NULL,
+    CONSTRAINT PK_unit PRIMARY KEY (name)
+);
+
 CREATE TABLE product (
     ean VARCHAR(13) NOT NULL,
     name VARCHAR(255) NOT NULL,
     brand VARCHAR(255) NOT NULL,
     quantity INT NOT NULL,
-    unit VARCHAR(50) NOT NULL,
-    CONSTRAINT PK_product PRIMARY KEY (ean)
+    unit VARCHAR(10) NOT NULL,
+    CONSTRAINT PK_product PRIMARY KEY (ean),
+    CONSTRAINT FK_unit FOREIGN KEY (unit) REFERENCES unit(name) ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
 CREATE TABLE observation (

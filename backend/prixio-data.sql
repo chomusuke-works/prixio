@@ -1,3 +1,8 @@
+INSERT INTO unit (name) VALUES
+('G'),
+('ML'),
+('PCS');
+
 INSERT INTO supermarket (name) VALUES
 ('Migros'),
 ('Coop'),
