@@ -26,17 +26,23 @@ public class TopController {
 	}
 
 	public void getTopUp(Context ctx) {
-		BoundedPriorityQueue<Pair<String, PriceChange>> topUp = getTopObservations(
+		BoundedPriorityQueue<Pair<String, PriceChange>> top = getTopObservations(
 			observationDAO,
 			(a, b) -> (int) Math.signum(a.getSecond().getPriceChange() - b.getSecond().getPriceChange())
 		);
-		List<ProductWithPriceChange> finalList = joinProductToPriceChanges(topUp, productDAO);
+		List<ProductWithPriceChange> finalList = joinProductToPriceChanges(top, productDAO);
 
 		ctx.json(finalList);
 	}
 
 	public void getTopDown(Context ctx) {
-		ctx.status(HttpStatus.NOT_IMPLEMENTED);
+		BoundedPriorityQueue<Pair<String, PriceChange>> top = getTopObservations(
+			observationDAO,
+			(a, b) -> (int) -Math.signum(a.getSecond().getPriceChange() - b.getSecond().getPriceChange())
+		);
+		List<ProductWithPriceChange> finalList = joinProductToPriceChanges(top, productDAO);
+
+		ctx.json(finalList);
 	}
 
 	@NotNull
