@@ -1,0 +1,36 @@
+$primary: #FFC42E;
+$secondary: #b7d7e3;
+$secondary-green: #C8F3C3;
+$light: #F9F9F9;
+$dark: #0e2543;
+
+body, .card, .btn, .form-control, .lead, .text-muted, .fw-bold, .fw-semibold {
+  font-family: 'Nunito', Arial, sans-serif !important;
+}
+
+h1, h2, h3, .display-1, .display-2, .display-3 {
+  font-family: 'Baloo 2', Arial, sans-serif !important;
+}
+
+body, .text-dark, .card, .btn, .form-control, .lead, .fw-bold, .fw-semibold, h1, h2, h3, h4, h5, h6, p, small, label, input, textarea, select {
+  color: $dark !important;
+}
+
+.product-card {
+  font-family: 'Nunito', Arial, sans-serif;
+  max-width: 350px;
+  border-radius: 1rem;
+  border: 1px solid #eee;
+  background-color: $light !important;
+}
+
+.logo-img {
+  height: 70px;
+  width: auto;
+}
+
+.header {
+  border-bottom: 4px solid $primary;
+}
+
+@import "~bootstrap/scss/bootstrap";
