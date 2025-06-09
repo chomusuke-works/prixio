@@ -1,29 +1,29 @@
 package ch.prixio.controllers;
 
+import ch.prixio.daos.ObservationDAO;
 import ch.prixio.datatypes.Observation;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.http.Context;
+import io.javalin.http.HttpStatus;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class ObservationController {
+	private final ObservationDAO observationDAO;
+
+	public ObservationController(Connection connection) {
+		this.observationDAO = new ObservationDAO(connection);
+	}
+
 	public void registerPriceObservation(Context ctx) {
 		Observation observation = ctx.bodyAsClass(Observation.class);
 
-		saveObservationToDB(observation);
-	}
-
-	/**
-	 * TODO: this is a dummy operation that does not save data to a real database yet.
-	 *
-	 * @param observation an observation to be pushed to the database
-	 */
-	private void saveObservationToDB(Observation observation) {
-		var objectMapper = new ObjectMapper()
-			.registerModule(new JavaTimeModule());
 		try {
-			System.out.println(objectMapper.writeValueAsString(observation));
-		} catch (JsonProcessingException e) {
+			boolean success = observationDAO.insertObservation(observation);
+			ctx.status(success ? HttpStatus.CREATED : HttpStatus.CONFLICT);
+		} catch (SQLException e) {
+			ctx.status(HttpStatus.INTERNAL_SERVER_ERROR);
+
 			throw new RuntimeException(e);
 		}
 	}

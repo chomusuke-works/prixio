@@ -1,55 +1,47 @@
 package ch.prixio.controllers;
 
-import java.time.LocalDate;
+import java.sql.Connection;
+import java.util.List;
+import java.util.Optional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.javalin.http.Context;
-import io.javalin.http.HttpStatus;
-
+import ch.prixio.daos.ObservationDAO;
+import ch.prixio.daos.ProductDAO;
 import ch.prixio.datatypes.Observation;
 import ch.prixio.datatypes.Product;
-import ch.prixio.datatypes.Supermarket;
-import ch.prixio.datatypes.Unit;
+import ch.prixio.datatypes.ProductWithPriceHistory;
+import io.javalin.http.Context;
+
+import io.javalin.http.HttpStatus;
 
 
 public class ProductController {
-	public void getProduct(Context ctx) {
-		long ean;
-		try {
-			ean = Long.parseLong(ctx.pathParam("ean"));
-		} catch (NumberFormatException e) {
-			ctx.status(HttpStatus.BAD_REQUEST);
+	private final ProductDAO productDAO;
+	private final ObservationDAO observationDAO;
 
-			return;
-		}
-		Product fetchedProduct = getProductFromDb(ean);
-
-		ctx.json(fetchedProduct);
+	public ProductController(Connection connection) {
+		this.productDAO = new ProductDAO(connection);
+		this.observationDAO = new ObservationDAO(connection);
 	}
 
-	/**
-	 * TODO: Database link, currently returns a dummy value
-	 *
-	 * @param ean the ean of the product
-	 * @return an instance of Product
-	 */
-	private Product getProductFromDb(long ean) {
-		var coop = new Supermarket("Coop");
-		return new Product(
-			80990062,
-			"Pure fresh sugarfree",
-			"Mentos",
-			90,
-			Unit.GRAMS,
-			null,
-			new Observation[]{
-				new Observation(80990062, coop, LocalDate.of(2024, 11, 1), 5.8),
-				new Observation(80990062, coop, LocalDate.of(2024, 12, 5), 5.85),
-				new Observation(80990062, coop, LocalDate.of(2025, 1, 12), 5.95),
-				new Observation(80990062, coop, LocalDate.of(2025, 2, 13), 5.90),
-				new Observation(80990062, coop, LocalDate.of(2025, 3, 28), 5.95),
-				new Observation(80990062, coop, LocalDate.of(2025, 4, 7), 6.10)
-			}
-		);
+	public void getProduct(Context ctx) {
+		String productEan = ctx.pathParam("ean");
+		Optional<Product> product = productDAO.getByEan(productEan);
+		if (product.isPresent()) {
+			ctx.json(product.get());
+		} else {
+			ctx.status(HttpStatus.NOT_FOUND);
+		}
+	}
+
+	public void getProductWithPriceHistory(Context ctx) {
+		String productEan = ctx.pathParam("ean");
+		Optional<Product> product = this.productDAO.getByEan(productEan);
+		if (product.isPresent()) {
+			List<Observation> observations = this.observationDAO.getObservations(productEan);
+
+			ctx.json(new ProductWithPriceHistory(product.get(), observations));
+		} else {
+			ctx.status(HttpStatus.NOT_FOUND);
+		}
 	}
 }
