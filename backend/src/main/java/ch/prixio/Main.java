@@ -26,11 +26,12 @@ public class Main {
 
 		var productController = new ProductController(connection);
 		var supermarketController = new SupermarketController(connection);
-		var observationController = new ObservationController();
+		var observationController = new ObservationController(connection);
 
 		Javalin app = Javalin.create();
 
 		app.get("/product/{ean}", productController::getProduct)
+			.get("/product/{ean}/with_price_history", productController::getProductWithPriceHistory)
 			.post("/record/{ean}", observationController::registerPriceObservation)
 			.get("/top/price-down", (Context) -> {})
 			.get("/top/price-up", (Context) -> {})

@@ -3,10 +3,7 @@ package ch.prixio.daos;
 import ch.prixio.datatypes.Observation;
 import ch.prixio.datatypes.Supermarket;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +17,8 @@ public class ObservationDAO extends DAO {
 		List<Observation> observations = new LinkedList<>();
 
 		try {
-			PreparedStatement statement = connection.prepareStatement("SELECT * FROM observation WHERE product_ean = ?;");
+			String query = "SELECT * FROM observation WHERE product_ean = ?;";
+			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setString(1, productEan);
 			ResultSet resultSet = statement.executeQuery();
 
@@ -41,5 +39,17 @@ public class ObservationDAO extends DAO {
 		}
 
 		return observations;
+	}
+
+	public boolean insertObservation(Observation observation) throws SQLException {
+		String query = "INSERT INTO observation(supermarket_name, product_ean, date, price) VALUES(?, ?, ?, ?);";
+		PreparedStatement statement = connection.prepareStatement(query);
+		statement.setString(1, observation.supermarket().name());
+		statement.setString(2, observation.ean());
+		statement.setDate(3, Date.valueOf(observation.date()));
+		statement.setDouble(4, observation.price());
+		int affectedRows = statement.executeUpdate();
+
+		return affectedRows == 1;
 	}
 }
