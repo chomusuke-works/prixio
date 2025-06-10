@@ -16,11 +16,11 @@ function App(): JSX.Element {
   >([]);
 
   useEffect(() => {
-    fetch("/top/price-down")
+    fetch(`${process.env.API_URL ?? ""}/top/down`)
       .then((res) => res.json())
       .then((data) => setCheaperProducts(data as ProductWithPriceChange[]))
       .catch(() => setCheaperProducts([]));
-    fetch("/top/price-up")
+    fetch(`${process.env.API_URL ?? ""}/top/up`)
       .then((res) => res.json())
       .then((data) => setPricierProducts(data as ProductWithPriceChange[]))
       .catch(() => setCheaperProducts([]));
@@ -39,7 +39,7 @@ function App(): JSX.Element {
           cheaperProducts={cheaperProducts}
           pricierProducts={pricierProducts}
           onSelectProduct={(ean): void => {
-            fetch(`/product/${ean}`)
+            fetch(`${process.env.API_URL ?? ""}/product/${ean}/with_price_history`)
               .then((res) => res.json())
               .then((fullProduct) => setSelectedProduct(fullProduct as Product))
               .catch(() => setSelectedProduct(null));

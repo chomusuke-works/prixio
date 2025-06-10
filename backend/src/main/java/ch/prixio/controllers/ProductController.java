@@ -24,7 +24,7 @@ public class ProductController {
 	}
 
 	public void getProduct(Context ctx) {
-		String productEan = ctx.pathParam("ean");
+		Long productEan = Long.valueOf(ctx.pathParam("ean"));
 		Optional<Product> product = productDAO.getByEan(productEan);
 		if (product.isPresent()) {
 			ctx.json(product.get());
@@ -34,7 +34,7 @@ public class ProductController {
 	}
 
 	public void getProductWithPriceHistory(Context ctx) {
-		String productEan = ctx.pathParam("ean");
+		Long productEan = Long.valueOf(ctx.pathParam("ean"));
 		Optional<Product> product = this.productDAO.getByEan(productEan);
 		if (product.isPresent()) {
 			List<Observation> observations = this.observationDAO.getObservations(productEan);

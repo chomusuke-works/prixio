@@ -26,7 +26,7 @@ function AddObservation({
 
     let supermarket = selectedSupermarket;
     if (showNewSupermarketInput && newSupermarket.trim()) {
-      const res = await fetch("/new/supermarket", {
+      const res = await fetch( `${process.env.API_URL ?? ""}/new/supermarket`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: newSupermarket.trim() }),
@@ -42,7 +42,7 @@ function AddObservation({
     const price = formData.get("price");
     const date = formData.get("date");
 
-    const recordRes = await fetch(`/record/${ean}`, {
+    const recordRes = await fetch(`${process.env.API_URL ?? ""}/record/${ean}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

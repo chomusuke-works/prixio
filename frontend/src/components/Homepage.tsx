@@ -27,7 +27,7 @@ function Homepage({
     }
     const timeout = setTimeout(() => {
       setLoading(true);
-      fetch(`/product/${encodeURIComponent(search)}`)
+      fetch(`${process.env.API_URL ?? ""}/product/${encodeURIComponent(search)}/with_price_history`)
         .then((res) => res.json())
         .then((data: ProductWithPriceChange[]) => setResults(data.slice(0, 10))) // Number of results limited to 10
         .finally(() => setLoading(false));

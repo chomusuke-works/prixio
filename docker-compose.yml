@@ -9,6 +9,7 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
 
   backend:
     build: ./backend
@@ -23,14 +24,14 @@ services:
     ports:
       - "8080:8080"
 
-  #frontend:
-  #  build: ./frontend
-  #  environment:
-  #    API_URL: http://localhost:8080
-  #  depends_on:
-  #    - backend
-  #  ports:
-  #    - "3000:3000"
+  frontend:
+    build: ./frontend
+    environment:
+      API_URL: http://backend:8080
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
 
 volumes:
   db_data:

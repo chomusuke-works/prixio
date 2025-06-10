@@ -26,7 +26,7 @@ public class TopController {
 	}
 
 	public void getTopUp(Context ctx) {
-		BoundedPriorityQueue<Pair<String, PriceChange>> top = getTopObservations(
+		BoundedPriorityQueue<Pair<Long, PriceChange>> top = getTopObservations(
 			observationDAO,
 			(a, b) -> (int) Math.signum(a.getSecond().getPriceChange() - b.getSecond().getPriceChange())
 		);
@@ -36,7 +36,7 @@ public class TopController {
 	}
 
 	public void getTopDown(Context ctx) {
-		BoundedPriorityQueue<Pair<String, PriceChange>> top = getTopObservations(
+		BoundedPriorityQueue<Pair<Long, PriceChange>> top = getTopObservations(
 			observationDAO,
 			(a, b) -> (int) -Math.signum(a.getSecond().getPriceChange() - b.getSecond().getPriceChange())
 		);
@@ -46,11 +46,11 @@ public class TopController {
 	}
 
 	@NotNull
-	private static BoundedPriorityQueue<Pair<String, PriceChange>> getTopObservations(
+	private static BoundedPriorityQueue<Pair<Long, PriceChange>> getTopObservations(
 		ObservationDAO dataSource,
-		Comparator<Pair<String, PriceChange>> comparator
+		Comparator<Pair<Long, PriceChange>> comparator
 	) {
-		BoundedPriorityQueue<Pair<String, PriceChange>> top = new BoundedPriorityQueue<>(
+		BoundedPriorityQueue<Pair<Long, PriceChange>> top = new BoundedPriorityQueue<>(
 			MAX_TOP_COUNT,
 			comparator
 		);
@@ -62,7 +62,7 @@ public class TopController {
 		}
 
 		int i = 0;
-		String lastEan;
+		Long lastEan;
 		while (i < observations.size()) {
 			Observation a = observations.get(i);
 			Observation b = observations.get(i+1);
@@ -70,7 +70,7 @@ public class TopController {
 
 			if (a.ean().equals(b.ean())) {
 				PriceChange c = new PriceChange(b.price(), a.price());
-				Pair<String, PriceChange> pair = new Pair<>(b.ean(), c);
+				Pair<Long, PriceChange> pair = new Pair<>(b.ean(), c);
 				top.offer(pair);
 			}
 			while (i < observations.size() && observations.get(i).ean().equals(lastEan)) ++i;  // Advance to the next product
@@ -79,7 +79,7 @@ public class TopController {
 		return top;
 	}
 
-	private static List<ProductWithPriceChange> joinProductToPriceChanges(BoundedPriorityQueue<Pair<String, PriceChange>> pairs, ProductDAO dataSource) throws NoSuchElementException{
+	private static List<ProductWithPriceChange> joinProductToPriceChanges(BoundedPriorityQueue<Pair<Long, PriceChange>> pairs, ProductDAO dataSource) throws NoSuchElementException{
 		return pairs.stream()
 			.map((pair) -> {
 				Optional<Product> product = dataSource.getByEan(pair.getFirst());

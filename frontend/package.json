@@ -8,6 +8,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "react-scripts start",
+    "build": "react-scripts build",
     "lint": "eslint . --ext .js,.ts,.tsx --fix",
     "format": "prettier --write '**/*.{js,ts,tsx,css,html,json,md}'"
   },
@@ -29,9 +30,10 @@
     "@types/prop-types": "^15.7.14",
     "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.5",
+    "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-unused-imports": "^4.1.4",
-    "typescript": "^5.1.6"
+    "typescript": "4.9.5"
   },
   "browserslist": {
     "production": [

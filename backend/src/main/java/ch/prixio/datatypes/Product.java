@@ -1,7 +1,7 @@
 package ch.prixio.datatypes;
 
 public record Product(
-	String ean,
+		Long ean,
 	String name,
 	String brand,
 	int quantity,
