@@ -1,13 +1,12 @@
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import React, { useState, JSX } from "react";
 
-import {Supermarket} from "../types";
+import {PriceObservation, Supermarket} from "../types";
 
 function AddObservation({
   supermarketList,
   ean,
 }: Readonly<{ supermarketList: Supermarket[]; ean: string }>): JSX.Element {
-  const [selectedSupermarket, setSelectedSupermarket] = useState("");
   const [showNewSupermarketInput, setShowNewSupermarketInput] = useState(false);
   const [newSupermarket, setNewSupermarket] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,7 +15,7 @@ function AddObservation({
     e: React.ChangeEvent<HTMLSelectElement>,
   ): void => {
     const value = e.target.value;
-    setSelectedSupermarket(value);
+    //setSelectedSupermarket(value);
     setShowNewSupermarketInput(value === "__add_new__");
   };
 
@@ -26,7 +25,6 @@ function AddObservation({
     e.preventDefault();
     setLoading(true);
 
-    let supermarket = selectedSupermarket;
     if (showNewSupermarketInput && newSupermarket.trim()) {
       const res = await fetch(
         `${process.env.REACT_APP_API_URL ?? ""}/new/supermarket`,
@@ -40,24 +38,26 @@ function AddObservation({
         setLoading(false);
         return;
       }
-      supermarket = newSupermarket.trim();
     }
 
     const formData = new FormData(e.currentTarget);
-    const price = formData.get("price");
-    const date = formData.get("date");
+    const supermarket = formData.get("supermarket") as string;
+    const price = formData.get("price") as string;
+    const date = formData.get("date") as string;
+    const dateArray = date.split('-').map((e => Number(e)));
+    const newObservation: PriceObservation = {
+      ean: ean,
+      supermarket: { name: supermarket },
+      date: dateArray,
+      price: Number(price)
+    }
 
     const recordRes = await fetch(
       `${process.env.REACT_APP_API_URL ?? ""}/record/${ean}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ean: ean,
-          supermarket: { name: supermarket },
-          date: date,
-          price: Number(price)
-        })
+        body: JSON.stringify(newObservation)
       }
     );
 
@@ -109,14 +109,14 @@ function AddObservation({
               </div>
               <div className="modal-body">
                 <div className="mb-3">
-                  <label htmlFor="supermarche" className="form-label text-dark">
+                  <label htmlFor="supermarket" className="form-label text-dark">
                     Sélectionner un supermarché
                   </label>
                   <select
                     className="form-control rounded-pill"
-                    id="supermarche"
+                    id="supermarket"
+                    name="supermarket"
                     required
-                    value={selectedSupermarket}
                     onChange={handleSupermarketChange}
                   >
                     {Array.isArray(supermarketList) &&
@@ -180,6 +180,7 @@ function AddObservation({
                 <button
                   type="submit"
                   className="btn btn-primary text-dark fw-bold rounded-pill px-4"
+                  data-bs-dismiss="modal"
                   disabled={loading}
                 >
                   {loading ? "Enregistrement..." : "Enregistrer"}

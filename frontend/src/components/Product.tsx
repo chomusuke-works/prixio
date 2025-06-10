@@ -16,7 +16,7 @@ function ProductDisplay({
   const [supermarkets, setSupermarkets] = useState<Supermarket[]>([]);
   fetch("http://localhost:8080/supermarket/all")
       .then(data => data.json())
-      .then(data => setSupermarkets(data))
+      .then(data => setSupermarkets(data as Supermarket[]))
       .catch(() => setSupermarkets([]));
 
   return (
