@@ -33,6 +33,7 @@ function AddObservation({
           body: JSON.stringify({ name: newSupermarket.trim() }),
         },
       );
+
       if (!res.ok) {
         setLoading(false);
         return;

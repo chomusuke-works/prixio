@@ -1,4 +1,4 @@
-import {JSX, useState} from "react";
+import {JSX, useEffect, useState} from "react";
 
 import type { ProductWithPriceHistory, Supermarket } from "../types";
 
@@ -14,10 +14,12 @@ function ProductDisplay({
   ...product
 }: ProductDisplayProps): JSX.Element {
   const [supermarkets, setSupermarkets] = useState<Supermarket[]>([]);
-  fetch(`${process.env.REACT_APP_API_URL ?? ""}/supermarket/all`)
-      .then(data => data.json())
-      .then(data => setSupermarkets(data as Supermarket[]))
-      .catch(() => setSupermarkets([]));
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL ?? ""}/supermarket/all`)
+        .then(data => data.json())
+        .then(data => setSupermarkets(data as Supermarket[]))
+        .catch(() => setSupermarkets([]));
+  }, []);
 
   return (
     <div className="min-vh-80 bg-secondary py-5">
