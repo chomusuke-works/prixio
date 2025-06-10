@@ -9,7 +9,7 @@ CREATE TABLE unit (
 );
 
 CREATE TABLE product (
-	ean BIGINT NOT NULL,
+	ean varchar(13) NOT NULL,
 	name VARCHAR(255) NOT NULL,
 	brand VARCHAR(255) NOT NULL,
 	quantity INT NOT NULL,
@@ -20,20 +20,18 @@ CREATE TABLE product (
 
 CREATE TABLE observation (
 	supermarket_name VARCHAR(255) NOT NULL,
-	product_ean BIGINT NOT NULL,
+	product_ean varchar(13) NOT NULL,
 	price DECIMAL(10, 2) NOT NULL,
 	date DATE NOT NULL,
-	CONSTRAINT PK_observation PRIMARY KEY (supermarket_name, product_EAN, date),
+	CONSTRAINT PK_observation PRIMARY KEY (supermarket_name, product_ean, date),
 	CONSTRAINT FK_supermarket FOREIGN KEY (supermarket_name) REFERENCES supermarket(name) ON UPDATE CASCADE ON DELETE CASCADE,
 	CONSTRAINT FK_product FOREIGN KEY (product_ean) REFERENCES product(ean) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 INSERT INTO unit (name) VALUES
-                             ('g'),
-                             ('kg'),
-                             ('ml'),
-                             ('L'),
-                             ('pcs');
+                             ('G'),
+                             ('ML'),
+                             ('PCS');
 
 INSERT INTO supermarket (name) VALUES
                                    ('Migros'),
