@@ -1,6 +1,6 @@
 import TimelineIcon from "@mui/icons-material/Timeline";
 import { add, differenceInCalendarDays, format } from "date-fns";
-import { JSX } from "react";
+import { JSX, useState } from "react";
 import {
   CartesianGrid,
   Legend,
@@ -8,11 +8,12 @@ import {
   LineChart,
   ResponsiveContainer,
   Tooltip,
+  TooltipProps,
   XAxis,
   YAxis,
 } from "recharts";
 
-import type { PriceHistory, PriceObservation } from "../types";
+import type { DataForChart, PriceHistory } from "../types";
 
 function toDate(dateArr: number[]): Date {
   return new Date(dateArr[0], dateArr[1] - 1, dateArr[2]);
@@ -26,7 +27,7 @@ function toDate(dateArr: number[]): Date {
  */
 function Chart({ data }: Readonly<{ data: PriceHistory }>): JSX.Element {
   const supermarkets: string[] = Array.from(
-      new Set<string>(data.map((d) => String(d.supermarket.name))),
+    new Set<string>(data.map((d) => String(d.supermarket.name))),
   );
   const colors = ["#8ec0e1", "#f3b2b0", "#9aeacd", "#fddea0"];
   const now = new Date();
@@ -43,6 +44,8 @@ function Chart({ data }: Readonly<{ data: PriceHistory }>): JSX.Element {
     ),
   );
   const domain = [startDate, now];
+  const [fixedPayload, setFixedPayload] = useState<any[] | null>(null);
+  const [fixedLabel, setFixedLabel] = useState<number | null>(null);
 
   return (
     <div style={{ width: "100%", height: 400 }}>
@@ -51,7 +54,18 @@ function Chart({ data }: Readonly<{ data: PriceHistory }>): JSX.Element {
         Historique des prix
       </h2>
       <ResponsiveContainer>
-        <LineChart data={data}>
+        <LineChart
+            data={data}
+            onClick={(e): void => {
+              if (e && e.activePayload && e.activeLabel) {
+                setFixedPayload(e.activePayload);
+                setFixedLabel(Number(e.activeLabel));
+              } else {
+                setFixedPayload(null);
+                setFixedLabel(null);
+              }
+            }}
+        >
           <XAxis
             dataKey="date"
             scale="time"
@@ -60,9 +74,20 @@ function Chart({ data }: Readonly<{ data: PriceHistory }>): JSX.Element {
             domain={domain.map((date) => date.getTime())}
             ticks={getTicks(startDate, now, 12)}
           />
-          <YAxis />
+          <YAxis
+            domain={[0, (dataMax: number): number => Math.ceil(dataMax + 1)]}
+          />
           <CartesianGrid stroke="#ccc" />
-          <Tooltip />
+          <Tooltip
+              content={(props: any): JSX.Element => (
+                  <CustomTooltip
+                      {...props}
+                      fixedPayload={fixedPayload}
+                      fixedLabel={fixedLabel}
+                      active={!!fixedPayload}
+                  />
+              )}
+          />
           <Legend />
           {supermarkets.map((supermarket, i) => (
             <Line
@@ -125,7 +150,7 @@ function DataPerSupermarket({
 }: {
   data: Readonly<PriceHistory>;
   supermarket: string;
-}): PriceObservation[] {
+}): DataForChart[] {
   const sorted = data
     .filter((d) => d.supermarket.name === supermarket)
     .sort((a, b) => toDate(a.date).getTime() - toDate(b.date).getTime());
@@ -135,20 +160,62 @@ function DataPerSupermarket({
   const last = sorted[sorted.length - 1];
   const today = new Date();
   const lastDate = toDate(last.date);
+  const chartData: DataForChart[] = sorted.map((d) => ({
+    supermarket: String(d.supermarket.name),
+    date: toDate(d.date),
+    price: d.price,
+  }));
   if (
     lastDate.getFullYear() !== today.getFullYear() ||
     lastDate.getMonth() !== today.getMonth() ||
     lastDate.getDate() !== today.getDate()
   ) {
     return [
-      ...sorted,
+      ...chartData,
       {
-        ...last,
-        date: [today.getFullYear(), today.getMonth(), today.getDate()],
+        supermarket: String(last.supermarket.name),
+        price: last.price,
+        date: toDate([
+          today.getFullYear(),
+          today.getMonth() + 1,
+          today.getDate(),
+        ]),
       },
     ];
   }
-  return sorted;
+  return chartData;
+}
+
+type CustomTooltipProps = TooltipProps<number, string> & {
+  fixedPayload?: any[] | null;
+  fixedLabel?: number | null;
+};
+
+function CustomTooltip({
+                         active,
+                         payload,
+                         label,
+                         fixedPayload,
+                         fixedLabel,
+                       }: CustomTooltipProps): JSX.Element | null {
+  if (!active) {return null;}
+  const showPayload = fixedPayload ?? payload;
+  const showLabel: number | string | undefined = fixedLabel !== undefined && fixedLabel !== null
+      ? fixedLabel
+      : (typeof label === "number" || typeof label === "string" ? label : undefined);
+  if (!Array.isArray(showPayload) || showPayload.length === 0) { return null; }
+  return (
+      <div className={"bg-light p-3 rounded-3 shadow-sm"}>
+        <strong>
+          {showLabel && new Date(Number(showLabel)).toLocaleDateString()}
+        </strong>
+        {showPayload.map((entry, i) => (
+            <div key={i}>
+              {(entry as { value: number; name: string }).name} : {(entry as { value: number; name: string }).value} CHF
+            </div>
+        ))}
+      </div>
+  );
 }
 
 export default Chart;

@@ -1,9 +1,15 @@
 export interface PriceObservation {
-  supermarket : {
+  supermarket: {
     name: string;
   };
   ean: string;
   date: number[];
+  price: number;
+}
+
+export interface DataForChart {
+  supermarket: string;
+  date: Date;
   price: number;
 }
 
