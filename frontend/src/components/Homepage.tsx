@@ -8,7 +8,7 @@ import { ProductWithPriceChange } from "../types";
 type HomepageProps = Readonly<{
   cheaperProducts: ProductWithPriceChange[];
   pricierProducts: ProductWithPriceChange[];
-  onSelectProduct: (ean: number) => void;
+  onSelectProduct: (ean: string) => void;
 }>;
 
 function Homepage({
@@ -44,7 +44,7 @@ function Homepage({
             className="input-group mx-auto w-50"
             onSubmit={(e): void => {
               e.preventDefault();
-              onSelectProduct(Number(search.trim()));
+              onSelectProduct(search.trim());
             }}
             autoComplete="off"
           >

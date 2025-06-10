@@ -4,7 +4,7 @@ import React, { useState, JSX } from "react";
 function AddObservation({
   supermarketList,
   ean,
-}: Readonly<{ supermarketList: string[]; ean: number }>): JSX.Element {
+}: Readonly<{ supermarketList: string[]; ean: string }>): JSX.Element {
   const [selectedSupermarket, setSelectedSupermarket] = useState("");
   const [showNewSupermarketInput, setShowNewSupermarketInput] = useState(false);
   const [newSupermarket, setNewSupermarket] = useState("");
