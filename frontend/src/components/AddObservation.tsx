@@ -15,7 +15,6 @@ function AddObservation({
     e: React.ChangeEvent<HTMLSelectElement>,
   ): void => {
     const value = e.target.value;
-    //setSelectedSupermarket(value);
     setShowNewSupermarketInput(value === "__add_new__");
   };
 

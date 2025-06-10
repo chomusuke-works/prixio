@@ -14,7 +14,7 @@ function ProductDisplay({
   ...product
 }: ProductDisplayProps): JSX.Element {
   const [supermarkets, setSupermarkets] = useState<Supermarket[]>([]);
-  fetch("http://localhost:8080/supermarket/all")
+  fetch(`${process.env.REACT_APP_API_URL ?? ""}/supermarket/all`)
       .then(data => data.json())
       .then(data => setSupermarkets(data as Supermarket[]))
       .catch(() => setSupermarkets([]));
