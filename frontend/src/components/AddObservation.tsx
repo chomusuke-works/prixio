@@ -1,10 +1,12 @@
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import React, { useState, JSX } from "react";
 
+import {Supermarket} from "../types";
+
 function AddObservation({
   supermarketList,
   ean,
-}: Readonly<{ supermarketList: string[]; ean: string }>): JSX.Element {
+}: Readonly<{ supermarketList: Supermarket[]; ean: string }>): JSX.Element {
   const [selectedSupermarket, setSelectedSupermarket] = useState("");
   const [showNewSupermarketInput, setShowNewSupermarketInput] = useState(false);
   const [newSupermarket, setNewSupermarket] = useState("");
@@ -51,11 +53,12 @@ function AddObservation({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          supermarket,
-          price: Number(price),
-          date,
-        }),
-      },
+          ean: ean,
+          supermarket: { name: supermarket },
+          date: date,
+          price: Number(price)
+        })
+      }
     );
 
     setLoading(false);
@@ -117,9 +120,9 @@ function AddObservation({
                     onChange={handleSupermarketChange}
                   >
                     {Array.isArray(supermarketList) &&
-                      supermarketList.map((supermarket: string) => (
-                        <option key={supermarket} value={supermarket}>
-                          {supermarket}
+                      supermarketList.map((supermarket: Supermarket) => (
+                        <option value={supermarket.name}>
+                          {capitalizeFirstLetter(supermarket.name)}
                         </option>
                       ))}
                     <option value="__add_new__">
@@ -188,6 +191,10 @@ function AddObservation({
       </div>
     </>
   );
+}
+
+function capitalizeFirstLetter(val: string): string {
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 }
 
 export default AddObservation;

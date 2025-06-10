@@ -1,6 +1,6 @@
-import { JSX } from "react";
+import {JSX, useState} from "react";
 
-import type { ProductWithPriceHistory } from "../types";
+import type { ProductWithPriceHistory, Supermarket } from "../types";
 
 import AddObservation from "./AddObservation";
 import Chart from "./Chart";
@@ -13,6 +13,12 @@ function ProductDisplay({
   onBack,
   ...product
 }: ProductDisplayProps): JSX.Element {
+  const [supermarkets, setSupermarkets] = useState<Supermarket[]>([]);
+  fetch("http://localhost:8080/supermarket/all")
+      .then(data => data.json())
+      .then(data => setSupermarkets(data))
+      .catch(() => setSupermarkets([]));
+
   return (
     <div className="min-vh-80 bg-secondary py-5">
       <section className="container">
@@ -38,7 +44,7 @@ function ProductDisplay({
           </div>
           <div className="mt-3 mt-md-0">
             <AddObservation
-              supermarketList={["Migros", "Coop", "Manor"]}
+              supermarketList={supermarkets}
               ean={product.product.ean}
             />
           </div>

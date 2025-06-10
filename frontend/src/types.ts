@@ -1,7 +1,9 @@
+export interface Supermarket {
+  name: string
+}
+
 export interface PriceObservation {
-  supermarket: {
-    name: string;
-  };
+  supermarket: Supermarket;
   ean: string;
   date: number[];
   price: number;

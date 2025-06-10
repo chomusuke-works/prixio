@@ -51,6 +51,7 @@ public class Main {
 			.get("/top/down", topController::getTopDown)
 			.get("/top/up", topController::getTopUp)
 			.get("/search/{query}", productController::searchProducts)
+			.get("/supermarket/all", supermarketController::getAll)
 			.post("/supermarket", supermarketController::createSupermarket)
 			.start(PORT);
 	}

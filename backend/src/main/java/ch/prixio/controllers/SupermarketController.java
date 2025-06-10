@@ -7,6 +7,7 @@ import io.javalin.http.HttpStatus;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 public class SupermarketController {
 	private final SupermarketDAO supermarketDAO;
@@ -24,5 +25,16 @@ public class SupermarketController {
 			ctx.status(HttpStatus.INTERNAL_SERVER_ERROR);
 			throw new RuntimeException(e);
 		}
+	}
+
+	public void getAll(Context ctx) {
+		try {
+			List<Supermarket> supermarkets = supermarketDAO.getAll();
+			ctx.json(supermarkets);
+		} catch (SQLException e) {
+			ctx.status(HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new RuntimeException(e);
+		}
+
 	}
 }
