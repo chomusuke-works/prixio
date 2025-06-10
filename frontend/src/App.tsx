@@ -4,10 +4,12 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Homepage from "./components/Homepage";
 import ProductDisplay from "./components/Product";
-import { Product, ProductWithPriceChange } from "./types";
+import { ProductWithPriceChange, ProductWithPriceHistory } from "./types";
+
+const backendDomain = "http://localhost:8080";
 
 function App(): JSX.Element {
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<ProductWithPriceHistory | null>(null);
   const [cheaperProducts, setCheaperProducts] = useState<
     ProductWithPriceChange[]
   >([]);
@@ -16,11 +18,11 @@ function App(): JSX.Element {
   >([]);
 
   useEffect(() => {
-    fetch("/top/price-down")
+    fetch(`${backendDomain}/top/down`)
       .then((res) => res.json())
       .then((data) => setCheaperProducts(data as ProductWithPriceChange[]))
       .catch(() => setCheaperProducts([]));
-    fetch("/top/price-up")
+    fetch(`${backendDomain}/top/up`)
       .then((res) => res.json())
       .then((data) => setPricierProducts(data as ProductWithPriceChange[]))
       .catch(() => setCheaperProducts([]));
@@ -39,9 +41,9 @@ function App(): JSX.Element {
           cheaperProducts={cheaperProducts}
           pricierProducts={pricierProducts}
           onSelectProduct={(ean): void => {
-            fetch(`/product/${ean}`)
+            fetch(`${backendDomain}/product/${ean}/with_price_history`)
               .then((res) => res.json())
-              .then((fullProduct) => setSelectedProduct(fullProduct as Product))
+              .then((fullProduct) => setSelectedProduct(fullProduct as ProductWithPriceHistory))
               .catch(() => setSelectedProduct(null));
           }}
         />

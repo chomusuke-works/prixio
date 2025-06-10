@@ -27,7 +27,7 @@ function Homepage({
     }
     const timeout = setTimeout(() => {
       setLoading(true);
-      fetch(`/product/${encodeURIComponent(search)}`)
+      fetch(`/product/${encodeURIComponent(search)}/with_price_history`)
         .then((res) => res.json())
         .then((data: ProductWithPriceChange[]) => setResults(data.slice(0, 10))) // Number of results limited to 10
         .finally(() => setLoading(false));
@@ -42,7 +42,10 @@ function Homepage({
         <div className="container position-relative">
           <form
             className="input-group mx-auto w-50"
-            onSubmit={(e): void => e.preventDefault()}
+            onSubmit={(e): void => {
+              e.preventDefault();
+              onSelectProduct(Number(search.trim()));
+            }}
             autoComplete="off"
           >
             <input
@@ -71,23 +74,23 @@ function Homepage({
                 <div className="p-2 text-center text-muted">Aucun résultat</div>
               ) : (
                 <ul className="list-group list-group-flush">
-                  {results.map((product) => (
+                  {results.map((productWithPriceChange) => (
                     <li
-                      key={product.ean}
+                      key={productWithPriceChange.product.ean}
                       className="list-group-item list-group-item-action"
                       style={{ cursor: "pointer" }}
                       tabIndex={0}
                       role="button"
-                      onClick={(): void => onSelectProduct(product.ean)}
+                      onClick={(): void => onSelectProduct(productWithPriceChange.product.ean)}
                       onKeyDown={(e): void => {
                         if (e.key === "Enter" || e.key === " ") {
                           e.preventDefault();
-                          onSelectProduct(product.ean);
+                          onSelectProduct(productWithPriceChange.product.ean);
                         }
                       }}
                     >
-                      <span className="fw-bold">{product.name}</span>{" "}
-                      <span className="text-muted">{product.brand}</span>
+                      <span className="fw-bold">{productWithPriceChange.product.name}</span>{" "}
+                      <span className="text-muted">{productWithPriceChange.product.brand}</span>
                     </li>
                   ))}
                 </ul>
@@ -111,12 +114,12 @@ function Homepage({
               </div>
             </div>
           ) : (
-            cheaperProducts.map((product) => (
-              <div className="col" key={product.ean}>
+            cheaperProducts.map((productWithPriceChange) => (
+              <div className="col" key={productWithPriceChange.product.ean}>
                 <ProductCard
-                  {...product}
+                  {...productWithPriceChange}
                   cheaper={true}
-                  onClick={(): void => onSelectProduct(product.ean)}
+                  onClick={(): void => onSelectProduct(productWithPriceChange.product.ean)}
                 />
               </div>
             ))
@@ -138,12 +141,12 @@ function Homepage({
               </div>
             </div>
           ) : (
-            pricierProducts.map((product) => (
-              <div className="col" key={product.ean}>
+            pricierProducts.map((productWithPriceChange) => (
+              <div className="col" key={productWithPriceChange.product.ean}>
                 <ProductCard
-                  {...product}
+                  {...productWithPriceChange}
                   cheaper={false}
-                  onClick={(): void => onSelectProduct(product.ean)}
+                  onClick={(): void => onSelectProduct(productWithPriceChange.product.ean)}
                 />
               </div>
             ))
@@ -165,7 +168,7 @@ type ProductCardProps = Readonly<ProductWithPriceChange> & {
  * @param onClick - Callback function to handle click events on the product card.
  * @param product - The product data to display, including its name, brand, quantity, unit, and price change details.
  */
-function ProductCard({ onClick, ...product }: ProductCardProps): JSX.Element {
+function ProductCard({ onClick, ...productInfo }: ProductCardProps): JSX.Element {
   return (
     <div
       className="product-card card mb-3 shadow-sm"
@@ -181,31 +184,31 @@ function ProductCard({ onClick, ...product }: ProductCardProps): JSX.Element {
       }}
     >
       <div className="card-body">
-        <h5 className="card-title mb-1 text-dark">{product.name}</h5>
-        <h6 className="card-subtitle mb-2 text-dark">{product.brand}</h6>
+        <h5 className="card-title mb-1 text-dark">{productInfo.product.name}</h5>
+        <h6 className="card-subtitle mb-2 text-dark">{productInfo.product.brand}</h6>
         <p className="mb-2 text-dark">
-          <span className="fw-semibold">Quantité :</span> {product.quantity}{" "}
-          {product.unit}
+          <span className="fw-semibold">Quantité :</span> {productInfo.product.quantity}{" "}
+          {productInfo.product.unit}
         </p>
         <div className="d-flex align-items-center mb-2">
           <span className="text-muted me-2 text-decoration-line-through">
-            {product.priceChange.oldPrice.toFixed(2)}&nbsp;CHF
+            {productInfo.priceChange.oldPrice.toFixed(2)}&nbsp;CHF
           </span>
           <span
-            className={`fw-bold fs-5 me-2 ${product.cheaper ? "text-success" : "text-danger"}`}
+            className={`fw-bold fs-5 me-2 ${productInfo.cheaper ? "text-success" : "text-danger"}`}
           >
-            {product.priceChange.newPrice.toFixed(2)}&nbsp;CHF
+            {productInfo.priceChange.newPrice.toFixed(2)}&nbsp;CHF
           </span>
           <span
-            className={`d-flex align-items-center ${product.cheaper ? "text-success" : "text-danger"}`}
+            className={`d-flex align-items-center ${productInfo.cheaper ? "text-success" : "text-danger"}`}
           >
-            {product.cheaper ? (
+            {productInfo.cheaper ? (
               <ArrowDownwardIcon fontSize="small" className="text-success" />
             ) : (
               <ArrowUpwardIcon fontSize="small" className="text-danger" />
             )}
             <span className="ms-1">
-              {product.priceChange.percentage.toFixed(1)}&nbsp;%
+              {productInfo.priceChange.priceChange.toFixed(1)}&nbsp;%
             </span>
           </span>
         </div>

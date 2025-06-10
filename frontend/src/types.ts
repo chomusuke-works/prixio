@@ -1,5 +1,6 @@
 export interface PriceObservation {
   supermarket: string;
+  ean: number;
   date: Date;
   price: number;
 }
@@ -12,18 +13,20 @@ export interface Product {
   brand: string;
   quantity: number;
   unit: string;
+}
+
+export interface ProductWithPriceHistory {
+  product: Product;
   priceHistory: PriceHistory;
 }
 
+export interface PriceChange {
+  oldPrice: number;
+  newPrice: number;
+  priceChange: number;
+}
+
 export interface ProductWithPriceChange {
-  ean: number;
-  name: string;
-  brand: string;
-  quantity: number;
-  unit: string;
-  priceChange: {
-    oldPrice: number;
-    newPrice: number;
-    percentage: number;
-  };
+  product: Product;
+  priceChange: PriceChange;
 }
