@@ -208,7 +208,7 @@ function ProductCard({ onClick, ...productInfo }: ProductCardProps): JSX.Element
               <ArrowUpwardIcon fontSize="small" className="text-danger" />
             )}
             <span className="ms-1">
-              {(((productInfo.priceChange.newPrice - productInfo.priceChange.oldPrice) / product.priceChange.oldPrice) * 100).toFixed(1)}&nbsp;%
+              {(((productInfo.priceChange.newPrice - productInfo.priceChange.oldPrice) / productInfo.priceChange.oldPrice) * 100).toFixed(1)}&nbsp;%
             </span>
           </span>
         </div>
