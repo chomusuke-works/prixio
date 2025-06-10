@@ -1,6 +1,5 @@
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import SearchIcon from "@mui/icons-material/Search";
 import { JSX, useState, useEffect } from "react";
 
 import {Product, ProductWithPriceChange} from "../types";
@@ -55,18 +54,11 @@ function Homepage({
           >
             <input
               type="text"
-              className="form-control text-dark rounded-start-pill"
+              className="form-control text-dark rounded-start-pill rounded-end-pill"
               placeholder="Rechercher un produit..."
               value={search}
               onChange={(e): void => setSearch(e.target.value)}
             />
-            <button
-              className="btn btn-primary text-dark rounded-end-pill bg-primary fw-bold border-0"
-              type="submit"
-            >
-              <SearchIcon className="me-1" />
-              Rechercher
-            </button>
           </form>
           {search.trim().length > 1 && (
             <div
