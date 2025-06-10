@@ -27,7 +27,7 @@ function Homepage({
     }
     const timeout = setTimeout(() => {
       setLoading(true);
-      fetch(`${process.env.API_URL ?? ""}/product/${encodeURIComponent(search)}/with_price_history`)
+      fetch(`${process.env.REACT_APP_API_URL ?? ""}/product/${encodeURIComponent(search)}/with_price_history`)
         .then((res) => res.json())
         .then((data: ProductWithPriceChange[]) => setResults(data.slice(0, 10))) // Number of results limited to 10
         .finally(() => setLoading(false));
@@ -205,7 +205,7 @@ function ProductCard({ onClick, ...product }: ProductCardProps): JSX.Element {
               <ArrowUpwardIcon fontSize="small" className="text-danger" />
             )}
             <span className="ms-1">
-              {product.priceChange.percentage.toFixed(1)}&nbsp;%
+              {(((product.priceChange.newPrice - product.priceChange.oldPrice) / product.priceChange.oldPrice) * 100).toFixed(1)}&nbsp;%
             </span>
           </span>
         </div>
