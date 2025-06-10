@@ -4,10 +4,10 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Homepage from "./components/Homepage";
 import ProductDisplay from "./components/Product";
-import { Product, ProductWithPriceChange } from "./types";
+import { ProductWithPriceChange, ProductWithPriceHistory } from "./types";
 
 function App(): JSX.Element {
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<ProductWithPriceHistory | null>(null);
   const [cheaperProducts, setCheaperProducts] = useState<
     ProductWithPriceChange[]
   >([]);
@@ -41,7 +41,7 @@ function App(): JSX.Element {
           onSelectProduct={(ean): void => {
             fetch(`${process.env.REACT_APP_API_URL ?? ""}/product/${ean}/with_price_history`)
               .then((res) => res.json())
-              .then((fullProduct) => setSelectedProduct(fullProduct as Product))
+              .then((fullProduct) => setSelectedProduct(fullProduct as ProductWithPriceHistory))
               .catch(() => setSelectedProduct(null));
           }}
         />
