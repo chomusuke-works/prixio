@@ -13,11 +13,11 @@ public class ObservationDAO extends DAO {
 		super(connection);
 	}
 
-	public List<Observation> getObservations(Long productEan) {
+	public List<Observation> getObservations(String productEan) {
 		try {
 			String query = "SELECT * FROM observation WHERE product_ean = ?;";
 			PreparedStatement statement = connection.prepareStatement(query);
-			statement.setLong(1, productEan);
+			statement.setString(1, productEan);
 			return getObservationsWithStatement(statement);
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
@@ -45,7 +45,7 @@ public class ObservationDAO extends DAO {
 
 		while (resultSet.next()) {
 			Observation observation = new Observation(
-				resultSet.getLong("product_ean"),
+				resultSet.getString("product_ean"),
 				new Supermarket(resultSet.getString("supermarket_name")),
 				resultSet.getDate("date").toLocalDate(),
 				resultSet.getDouble("price")
@@ -61,7 +61,7 @@ public class ObservationDAO extends DAO {
 		String query = "INSERT INTO observation(supermarket_name, product_ean, date, price) VALUES(?, ?, ?, ?);";
 		PreparedStatement statement = connection.prepareStatement(query);
 		statement.setString(1, observation.supermarket().name());
-		statement.setLong(2, observation.ean());
+		statement.setString(2, observation.ean());
 		statement.setDate(3, Date.valueOf(observation.date()));
 		statement.setDouble(4, observation.price());
 		int affectedRows = statement.executeUpdate();

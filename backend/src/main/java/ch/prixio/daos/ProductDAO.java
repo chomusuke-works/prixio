@@ -21,11 +21,11 @@ public class ProductDAO extends DAO {
 	 * @param productEan the EAN code of the product
 	 * @return an optional containing a Product object if the requested product is found, and an empty optional otherwise.
 	 */
-	public Optional<Product> getByEan(Long productEan) {
+	public Optional<Product> getByEan(String productEan) {
 		ResultSet resultSet;
 		try {
 			PreparedStatement statement = connection.prepareStatement("SELECT * FROM product WHERE ean = ?");
-			statement.setLong(1, productEan);
+			statement.setString(1, productEan);
 			resultSet = statement.executeQuery();
 			if (!resultSet.isBeforeFirst()) {
 				return Optional.empty();
