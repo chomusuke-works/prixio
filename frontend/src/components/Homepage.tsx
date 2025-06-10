@@ -3,7 +3,7 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import SearchIcon from "@mui/icons-material/Search";
 import { JSX, useState, useEffect } from "react";
 
-import { ProductWithPriceChange } from "../types";
+import {Product, ProductWithPriceChange} from "../types";
 
 type HomepageProps = Readonly<{
   cheaperProducts: ProductWithPriceChange[];
@@ -17,7 +17,7 @@ function Homepage({
   onSelectProduct,
 }: HomepageProps): JSX.Element {
   const [search, setSearch] = useState("");
-  const [results, setResults] = useState<ProductWithPriceChange[]>([]);
+  const [results, setResults] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -28,11 +28,14 @@ function Homepage({
     const timeout = setTimeout(() => {
       setLoading(true);
       fetch(
-        `${process.env.REACT_APP_API_URL ?? ""}/product/${encodeURIComponent(search)}/with_price_history`,
+          `${process.env.REACT_APP_API_URL ?? ""}/search/${encodeURIComponent(search)}`,
       )
-        .then((res) => res.json())
-        .then((data: ProductWithPriceChange[]) => setResults(data.slice(0, 10))) // Number of results limited to 10
-        .finally(() => setLoading(false));
+          .then(async (res) => {
+            const text = await res.text();
+            return text ? (JSON.parse(text) as Product[]) : [];
+          })
+          .then((data: Product[]) => setResults(data.slice(0, 10)))
+          .finally(() => setLoading(false));
     }, 400);
     return () => clearTimeout(timeout);
   }, [search]);
@@ -76,28 +79,28 @@ function Homepage({
                 <div className="p-2 text-center text-muted">Aucun résultat</div>
               ) : (
                 <ul className="list-group list-group-flush">
-                  {results.map((productWithPriceChange) => (
+                  {results.map((product: Product) => (
                     <li
-                      key={productWithPriceChange.product.ean}
+                      key={product.ean}
                       className="list-group-item list-group-item-action"
                       style={{ cursor: "pointer" }}
                       tabIndex={0}
                       role="button"
                       onClick={(): void =>
-                        onSelectProduct(productWithPriceChange.product.ean)
+                        onSelectProduct(product.ean)
                       }
                       onKeyDown={(e): void => {
                         if (e.key === "Enter" || e.key === " ") {
                           e.preventDefault();
-                          onSelectProduct(productWithPriceChange.product.ean);
+                          onSelectProduct(product.ean);
                         }
                       }}
                     >
                       <span className="fw-bold">
-                        {productWithPriceChange.product.name}
+                        {product.name}
                       </span>{" "}
                       <span className="text-muted">
-                        {productWithPriceChange.product.brand}
+                        {product.brand}
                       </span>
                     </li>
                   ))}

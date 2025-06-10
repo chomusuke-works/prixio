@@ -44,4 +44,10 @@ public class ProductController {
 			ctx.status(HttpStatus.NOT_FOUND);
 		}
 	}
+
+	public void searchProducts(Context ctx) {
+		String query = ctx.pathParam("query");
+		List<Product> products = productDAO.search(query);
+		ctx.json(products);
+	}
 }

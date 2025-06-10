@@ -55,16 +55,16 @@ function Chart({ data }: Readonly<{ data: PriceHistory }>): JSX.Element {
       </h2>
       <ResponsiveContainer>
         <LineChart
-            data={data}
-            onClick={(e): void => {
-              if (e && e.activePayload && e.activeLabel) {
-                setFixedPayload(e.activePayload);
-                setFixedLabel(Number(e.activeLabel));
-              } else {
-                setFixedPayload(null);
-                setFixedLabel(null);
-              }
-            }}
+          data={data}
+          onClick={(e): void => {
+            if (e && e.activePayload && e.activeLabel) {
+              setFixedPayload(e.activePayload);
+              setFixedLabel(Number(e.activeLabel));
+            } else {
+              setFixedPayload(null);
+              setFixedLabel(null);
+            }
+          }}
         >
           <XAxis
             dataKey="date"
@@ -79,14 +79,14 @@ function Chart({ data }: Readonly<{ data: PriceHistory }>): JSX.Element {
           />
           <CartesianGrid stroke="#ccc" />
           <Tooltip
-              content={(props: any): JSX.Element => (
-                  <CustomTooltip
-                      {...props}
-                      fixedPayload={fixedPayload}
-                      fixedLabel={fixedLabel}
-                      active={!!fixedPayload}
-                  />
-              )}
+            content={(props: any): JSX.Element => (
+              <CustomTooltip
+                {...props}
+                fixedPayload={fixedPayload}
+                fixedLabel={fixedLabel}
+                active={!!fixedPayload}
+              />
+            )}
           />
           <Legend />
           {supermarkets.map((supermarket, i) => (
@@ -192,29 +192,37 @@ type CustomTooltipProps = TooltipProps<number, string> & {
 };
 
 function CustomTooltip({
-                         active,
-                         payload,
-                         label,
-                         fixedPayload,
-                         fixedLabel,
-                       }: CustomTooltipProps): JSX.Element | null {
-  if (!active) {return null;}
+  active,
+  payload,
+  label,
+  fixedPayload,
+  fixedLabel,
+}: CustomTooltipProps): JSX.Element | null {
+  if (!active) {
+    return null;
+  }
   const showPayload = fixedPayload ?? payload;
-  const showLabel: number | string | undefined = fixedLabel !== undefined && fixedLabel !== null
+  const showLabel: number | string | undefined =
+    fixedLabel !== undefined && fixedLabel !== null
       ? fixedLabel
-      : (typeof label === "number" || typeof label === "string" ? label : undefined);
-  if (!Array.isArray(showPayload) || showPayload.length === 0) { return null; }
+      : typeof label === "number" || typeof label === "string"
+        ? label
+        : undefined;
+  if (!Array.isArray(showPayload) || showPayload.length === 0) {
+    return null;
+  }
   return (
-      <div className={"bg-light p-3 rounded-3 shadow-sm"}>
-        <strong>
-          {showLabel && new Date(Number(showLabel)).toLocaleDateString()}
-        </strong>
-        {showPayload.map((entry, i) => (
-            <div key={i}>
-              {(entry as { value: number; name: string }).name} : {(entry as { value: number; name: string }).value} CHF
-            </div>
-        ))}
-      </div>
+    <div className={"bg-light p-3 rounded-3 shadow-sm"}>
+      <strong>
+        {showLabel && new Date(Number(showLabel)).toLocaleDateString()}
+      </strong>
+      {showPayload.map((entry, i) => (
+        <div key={i}>
+          {(entry as { value: number; name: string }).name} :{" "}
+          {(entry as { value: number; name: string }).value} CHF
+        </div>
+      ))}
+    </div>
   );
 }
 

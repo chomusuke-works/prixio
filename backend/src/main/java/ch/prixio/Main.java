@@ -50,6 +50,7 @@ public class Main {
 			.post("/record/{ean}", observationController::registerPriceObservation)
 			.get("/top/down", topController::getTopDown)
 			.get("/top/up", topController::getTopUp)
+			.get("/search/{query}", productController::searchProducts)
 			.post("/supermarket", supermarketController::createSupermarket)
 			.start(PORT);
 	}
