@@ -14,6 +14,10 @@ import {
 
 import type { PriceHistory, PriceObservation } from "../types";
 
+function toDate(dateArr: number[]): Date {
+  return new Date(dateArr[0], dateArr[1] - 1, dateArr[2]);
+}
+
 /**
  * Chart component that displays the price history of a product over time.
  * It uses Recharts to create a line chart with data points for each supermarket.
@@ -22,7 +26,7 @@ import type { PriceHistory, PriceObservation } from "../types";
  */
 function Chart({ data }: Readonly<{ data: PriceHistory }>): JSX.Element {
   const supermarkets: string[] = Array.from(
-    new Set(data.map((d) => d.supermarket)),
+      new Set<string>(data.map((d) => String(d.supermarket.name))),
   );
   const colors = ["#8ec0e1", "#f3b2b0", "#9aeacd", "#fddea0"];
   const now = new Date();
@@ -35,7 +39,7 @@ function Chart({ data }: Readonly<{ data: PriceHistory }>): JSX.Element {
   const startDate = new Date(
     Math.max(
       oneYearAgo.getTime(),
-      Math.min(...data.map((d) => d.date.getTime())),
+      Math.min(...data.map((d) => toDate(d.date).getTime())),
     ),
   );
   const domain = [startDate, now];
@@ -123,19 +127,26 @@ function DataPerSupermarket({
   supermarket: string;
 }): PriceObservation[] {
   const sorted = data
-    .filter((d) => d.supermarket === supermarket)
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
+    .filter((d) => d.supermarket.name === supermarket)
+    .sort((a, b) => toDate(a.date).getTime() - toDate(b.date).getTime());
   if (sorted.length === 0) {
     return [];
   }
   const last = sorted[sorted.length - 1];
   const today = new Date();
+  const lastDate = toDate(last.date);
   if (
-    last.date.getFullYear() !== today.getFullYear() ||
-    last.date.getMonth() !== today.getMonth() ||
-    last.date.getDate() !== today.getDate()
+    lastDate.getFullYear() !== today.getFullYear() ||
+    lastDate.getMonth() !== today.getMonth() ||
+    lastDate.getDate() !== today.getDate()
   ) {
-    return [...sorted, { ...last, date: today }];
+    return [
+      ...sorted,
+      {
+        ...last,
+        date: [today.getFullYear(), today.getMonth(), today.getDate()],
+      },
+    ];
   }
   return sorted;
 }

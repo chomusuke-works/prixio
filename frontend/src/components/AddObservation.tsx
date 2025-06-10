@@ -26,11 +26,14 @@ function AddObservation({
 
     let supermarket = selectedSupermarket;
     if (showNewSupermarketInput && newSupermarket.trim()) {
-      const res = await fetch( `${process.env.REACT_APP_API_URL ?? ""}/new/supermarket`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newSupermarket.trim() }),
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL ?? ""}/new/supermarket`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: newSupermarket.trim() }),
+        },
+      );
       if (!res.ok) {
         setLoading(false);
         return;
@@ -42,22 +45,24 @@ function AddObservation({
     const price = formData.get("price");
     const date = formData.get("date");
 
-    const recordRes = await fetch(`${process.env.REACT_APP_API_URL ?? ""}/record/${ean}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        supermarket,
-        price: Number(price),
-        date,
-      }),
-    });
+    const recordRes = await fetch(
+      `${process.env.REACT_APP_API_URL ?? ""}/record/${ean}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          supermarket,
+          price: Number(price),
+          date,
+        }),
+      },
+    );
 
     setLoading(false);
 
     if (!recordRes.ok) {
       return;
     }
-
   };
 
   return (

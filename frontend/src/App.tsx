@@ -7,7 +7,8 @@ import ProductDisplay from "./components/Product";
 import { ProductWithPriceChange, ProductWithPriceHistory } from "./types";
 
 function App(): JSX.Element {
-  const [selectedProduct, setSelectedProduct] = useState<ProductWithPriceHistory | null>(null);
+  const [selectedProduct, setSelectedProduct] =
+    useState<ProductWithPriceHistory | null>(null);
   const [cheaperProducts, setCheaperProducts] = useState<
     ProductWithPriceChange[]
   >([]);
@@ -39,9 +40,13 @@ function App(): JSX.Element {
           cheaperProducts={cheaperProducts}
           pricierProducts={pricierProducts}
           onSelectProduct={(ean): void => {
-            fetch(`${process.env.REACT_APP_API_URL ?? ""}/product/${ean}/with_price_history`)
+            fetch(
+              `${process.env.REACT_APP_API_URL ?? ""}/product/${ean}/with_price_history`,
+            )
               .then((res) => res.json())
-              .then((fullProduct) => setSelectedProduct(fullProduct as ProductWithPriceHistory))
+              .then((fullProduct) =>
+                setSelectedProduct(fullProduct as ProductWithPriceHistory),
+              )
               .catch(() => setSelectedProduct(null));
           }}
         />

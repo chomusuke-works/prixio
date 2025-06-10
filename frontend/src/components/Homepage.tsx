@@ -27,7 +27,9 @@ function Homepage({
     }
     const timeout = setTimeout(() => {
       setLoading(true);
-      fetch(`${process.env.REACT_APP_API_URL ?? ""}/product/${encodeURIComponent(search)}/with_price_history`)
+      fetch(
+        `${process.env.REACT_APP_API_URL ?? ""}/product/${encodeURIComponent(search)}/with_price_history`,
+      )
         .then((res) => res.json())
         .then((data: ProductWithPriceChange[]) => setResults(data.slice(0, 10))) // Number of results limited to 10
         .finally(() => setLoading(false));
@@ -81,7 +83,9 @@ function Homepage({
                       style={{ cursor: "pointer" }}
                       tabIndex={0}
                       role="button"
-                      onClick={(): void => onSelectProduct(productWithPriceChange.product.ean)}
+                      onClick={(): void =>
+                        onSelectProduct(productWithPriceChange.product.ean)
+                      }
                       onKeyDown={(e): void => {
                         if (e.key === "Enter" || e.key === " ") {
                           e.preventDefault();
@@ -89,8 +93,12 @@ function Homepage({
                         }
                       }}
                     >
-                      <span className="fw-bold">{productWithPriceChange.product.name}</span>{" "}
-                      <span className="text-muted">{productWithPriceChange.product.brand}</span>
+                      <span className="fw-bold">
+                        {productWithPriceChange.product.name}
+                      </span>{" "}
+                      <span className="text-muted">
+                        {productWithPriceChange.product.brand}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -119,7 +127,9 @@ function Homepage({
                 <ProductCard
                   {...productWithPriceChange}
                   cheaper={true}
-                  onClick={(): void => onSelectProduct(productWithPriceChange.product.ean)}
+                  onClick={(): void =>
+                    onSelectProduct(productWithPriceChange.product.ean)
+                  }
                 />
               </div>
             ))
@@ -146,7 +156,9 @@ function Homepage({
                 <ProductCard
                   {...productWithPriceChange}
                   cheaper={false}
-                  onClick={(): void => onSelectProduct(productWithPriceChange.product.ean)}
+                  onClick={(): void =>
+                    onSelectProduct(productWithPriceChange.product.ean)
+                  }
                 />
               </div>
             ))
@@ -168,7 +180,10 @@ type ProductCardProps = Readonly<ProductWithPriceChange> & {
  * @param onClick - Callback function to handle click events on the product card.
  * @param product - The product data to display, including its name, brand, quantity, unit, and price change details.
  */
-function ProductCard({ onClick, ...productInfo }: ProductCardProps): JSX.Element {
+function ProductCard({
+  onClick,
+  ...productInfo
+}: ProductCardProps): JSX.Element {
   return (
     <div
       className="product-card card mb-3 shadow-sm"
@@ -184,11 +199,15 @@ function ProductCard({ onClick, ...productInfo }: ProductCardProps): JSX.Element
       }}
     >
       <div className="card-body">
-        <h5 className="card-title mb-1 text-dark">{productInfo.product.name}</h5>
-        <h6 className="card-subtitle mb-2 text-dark">{productInfo.product.brand}</h6>
+        <h5 className="card-title mb-1 text-dark">
+          {productInfo.product.name}
+        </h5>
+        <h6 className="card-subtitle mb-2 text-dark">
+          {productInfo.product.brand}
+        </h6>
         <p className="mb-2 text-dark">
-          <span className="fw-semibold">Quantité :</span> {productInfo.product.quantity}{" "}
-          {productInfo.product.unit}
+          <span className="fw-semibold">Quantité :</span>{" "}
+          {productInfo.product.quantity} {productInfo.product.unit}
         </p>
         <div className="d-flex align-items-center mb-2">
           <span className="text-muted me-2 text-decoration-line-through">
@@ -208,7 +227,13 @@ function ProductCard({ onClick, ...productInfo }: ProductCardProps): JSX.Element
               <ArrowUpwardIcon fontSize="small" className="text-danger" />
             )}
             <span className="ms-1">
-              {(((productInfo.priceChange.newPrice - productInfo.priceChange.oldPrice) / productInfo.priceChange.oldPrice) * 100).toFixed(1)}&nbsp;%
+              {(
+                ((productInfo.priceChange.newPrice -
+                  productInfo.priceChange.oldPrice) /
+                  productInfo.priceChange.oldPrice) *
+                100
+              ).toFixed(1)}
+              &nbsp;%
             </span>
           </span>
         </div>
