@@ -47,23 +47,25 @@ export function Homepage({
       {/* Search */}
       <section className="py-3 bg-secondary">
         <div className="container position-relative">
-          <form
-            className="input-group mx-auto w-50 d-flex align-items-center"
-            onSubmit={(e): void => {
-              e.preventDefault();
-              onSelectProduct(search.trim());
-            }}
-            autoComplete="off"
-          >
-            <input
-              type="text"
-              className="form-control text-dark rounded-start-pill rounded-end-pill"
-              placeholder="Rechercher un produit..."
-              value={search}
-              onChange={onSearchChange}
-            />
-            {search.trim().length > MIN_SEARCH_STRING_LENGTH && !loading && results.length === 0 && (<AddProduct name={search.trim()}/>)}
-          </form>
+          <div className="d-flex align-items-center w-50 mx-auto gap-2">
+            <form
+                className="input-group"
+                onSubmit={(e): void => {
+                  e.preventDefault();
+                  onSelectProduct(search.trim());
+                }}
+                autoComplete="off"
+            >
+              <input
+                  type="text"
+                  className="form-control text-dark rounded-start-pill rounded-end-pill px-4 py-2"
+                  placeholder="Rechercher un produit..."
+                  value={search}
+                  onChange={onSearchChange}
+              />
+            </form>
+            {search.trim().length > MIN_SEARCH_STRING_LENGTH && !loading && results.length === 0 && (<AddProduct name={search.trim()} />)}
+          </div>
           {search.trim().length > 1 && (
             <div
               className="position-absolute bg-white shadow rounded w-50"

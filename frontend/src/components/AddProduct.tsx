@@ -18,8 +18,22 @@ function AddProduct({
     const ean = formData.get("ean") as string;
     const name = formData.get("name") as string;
     const brand = formData.get("brand") as string;
-    const quantity = Number(formData.get("quantity") as string);
-    const unit = formData.get("unit") as string;
+    let quantity = Number(formData.get("quantity") as string);
+    let unit = formData.get("unit") as string;
+    switch (unit) {
+      case "L": {
+        quantity *= 1000;
+        unit = "ml";
+        break;
+      }
+      case "kg": {
+        quantity *= 1000;
+        unit = "g";
+        break;
+      }
+    }
+    unit = unit.toUpperCase();
+
     const newProduct: Product = {
       ean: ean,
       name: name,
@@ -48,7 +62,7 @@ function AddProduct({
     <>
       <button
           type="button"
-          className="btn btn-primary text-dark fw-bold rounded-pill px-4 py-2 mb-2"
+          className="btn btn-primary text-dark text-nowrap fw-bold rounded-pill px-4 py-2 ml-2"
           data-bs-toggle="modal"
           data-bs-target="#formModal"
       >
@@ -97,7 +111,7 @@ function AddProduct({
                       type="text"
                       className="form-control rounded-pill"
                       required
-                      value={name}
+                      defaultValue={name}
                   />
                 </div>
                 <div className="mb-3">
@@ -113,11 +127,11 @@ function AddProduct({
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="price" className="form-label text-dark">
-                    Prix (CHF)
+                  <label htmlFor="quantity" className="form-label text-dark">
+                    Quantité
                   </label>
                   <input
-                      id="price"
+                      id="quantity"
                       name="quantity"
                       type="number"
                       step="1"
@@ -127,7 +141,7 @@ function AddProduct({
                 </div>
                 <div className="mb-3">
                   <label htmlFor="unit" className="form-label text-dark">
-                    Sélectionner une unité
+                    Unité
                   </label>
                   <select
                       id="unit"
