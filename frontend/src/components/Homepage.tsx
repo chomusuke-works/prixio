@@ -12,7 +12,7 @@ type HomepageProps = Readonly<{
   onSelectProduct: (ean: string) => void;
 }>;
 
-const MIN_SEARCH_STRING_LENGTH = 2;
+const MIN_SEARCH_STRING_LENGTH = 1;
 
 export function Homepage({
   cheaperProducts,
