@@ -1,5 +1,5 @@
 export interface Supermarket {
-  name: string
+  name: string;
 }
 
 export interface PriceObservation {

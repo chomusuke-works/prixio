@@ -1,7 +1,7 @@
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import React, { useState, JSX } from "react";
 
-import {PriceObservation, Supermarket} from "../types";
+import { PriceObservation, Supermarket } from "../types";
 
 function AddObservation({
   supermarketList,
@@ -26,7 +26,7 @@ function AddObservation({
 
     if (showNewSupermarketInput && newSupermarket.trim()) {
       const res = await fetch(
-        `${process.env.REACT_APP_API_URL ?? ""}/new/supermarket`,
+        `${process.env.REACT_APP_API_URL ?? ""}/supermarket`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -44,21 +44,21 @@ function AddObservation({
     const supermarket = formData.get("supermarket") as string;
     const price = formData.get("price") as string;
     const date = formData.get("date") as string;
-    const dateArray = date.split('-').map((e => Number(e)));
+    const dateArray = date.split("-").map((e) => Number(e));
     const newObservation: PriceObservation = {
       ean: ean,
       supermarket: { name: supermarket },
       date: dateArray,
-      price: Number(price)
-    }
+      price: Number(price),
+    };
 
     const recordRes = await fetch(
       `${process.env.REACT_APP_API_URL ?? ""}/record/${ean}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newObservation)
-      }
+        body: JSON.stringify(newObservation),
+      },
     );
 
     setLoading(false);

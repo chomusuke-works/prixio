@@ -1,11 +1,9 @@
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import React, { useState, JSX } from "react";
 
-import {Product} from "../types";
+import { Product } from "../types";
 
-function AddProduct({
-  name
-}: Readonly<{ name: string }>): JSX.Element {
+function AddProduct({ name }: Readonly<{ name: string }>): JSX.Element {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (
@@ -39,16 +37,16 @@ function AddProduct({
       name: name,
       brand: brand,
       quantity: quantity,
-      unit: unit
-    }
+      unit: unit,
+    };
 
     const recordRes = await fetch(
       `${process.env.REACT_APP_API_URL ?? ""}/product`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newProduct)
-      }
+        body: JSON.stringify(newProduct),
+      },
     );
 
     setLoading(false);
@@ -61,15 +59,21 @@ function AddProduct({
   return (
     <>
       <button
-          type="button"
-          className="btn btn-primary text-dark text-nowrap fw-bold rounded-pill px-4 py-2 ml-2"
-          data-bs-toggle="modal"
-          data-bs-target="#formModal"
+        type="button"
+        className="btn btn-primary text-dark text-nowrap fw-bold rounded-pill px-4 py-2 ml-2"
+        data-bs-toggle="modal"
+        data-bs-target="#formModal"
       >
         <AddCircleOutlineIcon className="me-1" />
         Ajouter "{name}"
       </button>
-      <div className="modal fade" id="formModal" tabIndex={-1} aria-labelledby="formModalLabel" aria-hidden="true" >
+      <div
+        className="modal fade"
+        id="formModal"
+        tabIndex={-1}
+        aria-labelledby="formModalLabel"
+        aria-hidden="true"
+      >
         <div className="modal-dialog">
           <div className="modal-content bg-light">
             <form
@@ -78,7 +82,10 @@ function AddProduct({
               }}
             >
               <div className="modal-header border-0">
-                <h5 className="modal-title text-dark fw-bold" id="formModalLabel" >
+                <h5
+                  className="modal-title text-dark fw-bold"
+                  id="formModalLabel"
+                >
                   Nouveau produit
                 </h5>
                 <button
@@ -94,11 +101,11 @@ function AddProduct({
                     EAN (code barres)
                   </label>
                   <input
-                      id="ean"
-                      name="ean"
-                      type="text"
-                      className="form-control rounded-pill"
-                      required
+                    id="ean"
+                    name="ean"
+                    type="text"
+                    className="form-control rounded-pill"
+                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -106,12 +113,12 @@ function AddProduct({
                     Nom
                   </label>
                   <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      className="form-control rounded-pill"
-                      required
-                      defaultValue={name}
+                    id="name"
+                    name="name"
+                    type="text"
+                    className="form-control rounded-pill"
+                    required
+                    defaultValue={name}
                   />
                 </div>
                 <div className="mb-3">
@@ -119,11 +126,11 @@ function AddProduct({
                     Marque
                   </label>
                   <input
-                      id="brand"
-                      name="brand"
-                      type="text"
-                      className="form-control rounded-pill"
-                      required
+                    id="brand"
+                    name="brand"
+                    type="text"
+                    className="form-control rounded-pill"
+                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -131,12 +138,12 @@ function AddProduct({
                     Quantité
                   </label>
                   <input
-                      id="quantity"
-                      name="quantity"
-                      type="number"
-                      step="1"
-                      className="form-control rounded-pill"
-                      required
+                    id="quantity"
+                    name="quantity"
+                    type="number"
+                    step="1"
+                    className="form-control rounded-pill"
+                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -144,10 +151,10 @@ function AddProduct({
                     Unité
                   </label>
                   <select
-                      id="unit"
-                      name="unit"
-                      className="form-control rounded-pill"
-                      required
+                    id="unit"
+                    name="unit"
+                    className="form-control rounded-pill"
+                    required
                   >
                     <option>g</option>
                     <option>kg</option>

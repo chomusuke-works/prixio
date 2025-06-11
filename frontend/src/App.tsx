@@ -2,7 +2,7 @@ import { JSX, useState, useEffect } from "react";
 
 import Footer from "./components/Footer";
 import Header from "./components/Header";
-import {Homepage} from "./components/Homepage";
+import { Homepage } from "./components/Homepage";
 import ProductDisplay from "./components/Product";
 import { ProductWithPriceChange, ProductWithPriceHistory } from "./types";
 

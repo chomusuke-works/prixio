@@ -1,4 +1,4 @@
-import {JSX, useEffect, useState} from "react";
+import { JSX, useEffect, useState } from "react";
 
 import type { ProductWithPriceHistory, Supermarket } from "../types";
 
@@ -16,9 +16,9 @@ function ProductDisplay({
   const [supermarkets, setSupermarkets] = useState<Supermarket[]>([]);
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL ?? ""}/supermarket/all`)
-        .then(data => data.json())
-        .then(data => setSupermarkets(data as Supermarket[]))
-        .catch(() => setSupermarkets([]));
+      .then((data) => data.json())
+      .then((data) => setSupermarkets(data as Supermarket[]))
+      .catch(() => setSupermarkets([]));
   }, []);
 
   return (

@@ -1,8 +1,8 @@
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import {JSX, useState, ChangeEvent} from "react";
+import { JSX, useState, ChangeEvent } from "react";
 
-import {Product, ProductWithPriceChange} from "../types";
+import { Product, ProductWithPriceChange } from "../types";
 
 import AddProduct from "./AddProduct";
 
@@ -32,15 +32,15 @@ export function Homepage({
 
     setLoading(true);
     fetch(
-        `${process.env.REACT_APP_API_URL ?? ""}/search/${encodeURIComponent(search)}`,
+      `${process.env.REACT_APP_API_URL ?? ""}/search/${encodeURIComponent(search)}`,
     )
-        .then(async (res) => {
-          const text = await res.text();
-          return text ? (JSON.parse(text) as Product[]) : [];
-        })
-        .then((data: Product[]) => setResults(data.slice(0, 10)))
-        .finally(() => setLoading(false));
-  }
+      .then(async (res) => {
+        const text = await res.text();
+        return text ? (JSON.parse(text) as Product[]) : [];
+      })
+      .then((data: Product[]) => setResults(data.slice(0, 10)))
+      .finally(() => setLoading(false));
+  };
 
   return (
     <div className="min-vh-80 bg-secondary">
@@ -49,22 +49,24 @@ export function Homepage({
         <div className="container position-relative">
           <div className="d-flex align-items-center w-50 mx-auto gap-2">
             <form
-                className="input-group"
-                onSubmit={(e): void => {
-                  e.preventDefault();
-                  onSelectProduct(search.trim());
-                }}
-                autoComplete="off"
+              className="input-group"
+              onSubmit={(e): void => {
+                e.preventDefault();
+                onSelectProduct(search.trim());
+              }}
+              autoComplete="off"
             >
               <input
-                  type="text"
-                  className="form-control text-dark rounded-start-pill rounded-end-pill px-4 py-2"
-                  placeholder="Rechercher un produit..."
-                  value={search}
-                  onChange={onSearchChange}
+                type="text"
+                className="form-control text-dark rounded-start-pill rounded-end-pill px-4 py-2"
+                placeholder="Rechercher un produit..."
+                value={search}
+                onChange={onSearchChange}
               />
             </form>
-            {search.trim().length > MIN_SEARCH_STRING_LENGTH && !loading && results.length === 0 && (<AddProduct name={search.trim()} />)}
+            {search.trim().length > MIN_SEARCH_STRING_LENGTH &&
+              !loading &&
+              results.length === 0 && <AddProduct name={search.trim()} />}
           </div>
           {search.trim().length > 1 && (
             <div
@@ -74,7 +76,7 @@ export function Homepage({
               {loading ? (
                 <div className="p-2 text-center">Recherche...</div>
               ) : results.length === 0 ? (
-                  <div className="p-2 text-center text-muted">Aucun résultat</div>
+                <div className="p-2 text-center text-muted">Aucun résultat</div>
               ) : (
                 <ul className="list-group list-group-flush">
                   {results.map((product: Product) => (
@@ -84,9 +86,7 @@ export function Homepage({
                       style={{ cursor: "pointer" }}
                       tabIndex={0}
                       role="button"
-                      onClick={(): void =>
-                        onSelectProduct(product.ean)
-                      }
+                      onClick={(): void => onSelectProduct(product.ean)}
                       onKeyDown={(e): void => {
                         if (e.key === "Enter" || e.key === " ") {
                           e.preventDefault();
@@ -94,12 +94,8 @@ export function Homepage({
                         }
                       }}
                     >
-                      <span className="fw-bold">
-                        {product.name}
-                      </span>{" "}
-                      <span className="text-muted">
-                        {product.brand}
-                      </span>
+                      <span className="fw-bold">{product.name}</span>{" "}
+                      <span className="text-muted">{product.brand}</span>
                     </li>
                   ))}
                 </ul>
@@ -242,4 +238,3 @@ function ProductCard({
     </div>
   );
 }
-
