@@ -10,7 +10,6 @@ import ch.prixio.daos.ProductDAO;
 import ch.prixio.datatypes.Observation;
 import ch.prixio.datatypes.Product;
 import ch.prixio.datatypes.ProductWithPriceHistory;
-import ch.prixio.datatypes.Supermarket;
 import io.javalin.http.Context;
 
 import io.javalin.http.HttpStatus;

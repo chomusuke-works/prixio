@@ -2,7 +2,7 @@ import { JSX, useState, useEffect } from "react";
 
 import Footer from "./components/Footer";
 import Header from "./components/Header";
-import Homepage from "./components/Homepage";
+import {Homepage} from "./components/Homepage";
 import ProductDisplay from "./components/Product";
 import { ProductWithPriceChange, ProductWithPriceHistory } from "./types";
 
@@ -39,7 +39,7 @@ function App(): JSX.Element {
         <Homepage
           cheaperProducts={cheaperProducts}
           pricierProducts={pricierProducts}
-          onSelectProduct={(ean): void => {
+          onSelectProduct={(ean: string): void => {
             fetch(
               `${process.env.REACT_APP_API_URL ?? ""}/product/${ean}/with_price_history`,
             )

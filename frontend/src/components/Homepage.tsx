@@ -1,8 +1,10 @@
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import { JSX, useState, useEffect } from "react";
+import {JSX, useState, ChangeEvent} from "react";
 
 import {Product, ProductWithPriceChange} from "../types";
+
+import AddProduct from "./AddProduct";
 
 type HomepageProps = Readonly<{
   cheaperProducts: ProductWithPriceChange[];
@@ -10,7 +12,9 @@ type HomepageProps = Readonly<{
   onSelectProduct: (ean: string) => void;
 }>;
 
-function Homepage({
+const MIN_SEARCH_STRING_LENGTH = 2;
+
+export function Homepage({
   cheaperProducts,
   pricierProducts,
   onSelectProduct,
@@ -19,25 +23,24 @@ function Homepage({
   const [results, setResults] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (search.trim().length < 2) {
+  const onSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setSearch(e.target.value);
+    if (search.trim().length <= MIN_SEARCH_STRING_LENGTH) {
       setResults([]);
       return;
     }
-    const timeout = setTimeout(() => {
-      setLoading(true);
-      fetch(
-          `${process.env.REACT_APP_API_URL ?? ""}/search/${encodeURIComponent(search)}`,
-      )
-          .then(async (res) => {
-            const text = await res.text();
-            return text ? (JSON.parse(text) as Product[]) : [];
-          })
-          .then((data: Product[]) => setResults(data.slice(0, 10)))
-          .finally(() => setLoading(false));
-    }, 400);
-    return () => clearTimeout(timeout);
-  }, [search]);
+
+    setLoading(true);
+    fetch(
+        `${process.env.REACT_APP_API_URL ?? ""}/search/${encodeURIComponent(search)}`,
+    )
+        .then(async (res) => {
+          const text = await res.text();
+          return text ? (JSON.parse(text) as Product[]) : [];
+        })
+        .then((data: Product[]) => setResults(data.slice(0, 10)))
+        .finally(() => setLoading(false));
+  }
 
   return (
     <div className="min-vh-80 bg-secondary">
@@ -45,7 +48,7 @@ function Homepage({
       <section className="py-3 bg-secondary">
         <div className="container position-relative">
           <form
-            className="input-group mx-auto w-50"
+            className="input-group mx-auto w-50 d-flex align-items-center"
             onSubmit={(e): void => {
               e.preventDefault();
               onSelectProduct(search.trim());
@@ -57,8 +60,9 @@ function Homepage({
               className="form-control text-dark rounded-start-pill rounded-end-pill"
               placeholder="Rechercher un produit..."
               value={search}
-              onChange={(e): void => setSearch(e.target.value)}
+              onChange={onSearchChange}
             />
+            {search.trim().length > MIN_SEARCH_STRING_LENGTH && !loading && results.length === 0 && (<AddProduct name={search.trim()}/>)}
           </form>
           {search.trim().length > 1 && (
             <div
@@ -68,7 +72,7 @@ function Homepage({
               {loading ? (
                 <div className="p-2 text-center">Recherche...</div>
               ) : results.length === 0 ? (
-                <div className="p-2 text-center text-muted">Aucun résultat</div>
+                  <div className="p-2 text-center text-muted">Aucun résultat</div>
               ) : (
                 <ul className="list-group list-group-flush">
                   {results.map((product: Product) => (
@@ -237,4 +241,3 @@ function ProductCard({
   );
 }
 
-export default Homepage;
