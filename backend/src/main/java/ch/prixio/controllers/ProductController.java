@@ -1,6 +1,7 @@
 package ch.prixio.controllers;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import ch.prixio.daos.ProductDAO;
 import ch.prixio.datatypes.Observation;
 import ch.prixio.datatypes.Product;
 import ch.prixio.datatypes.ProductWithPriceHistory;
+import ch.prixio.datatypes.Supermarket;
 import io.javalin.http.Context;
 
 import io.javalin.http.HttpStatus;
@@ -30,6 +32,17 @@ public class ProductController {
 			ctx.json(product.get());
 		} else {
 			ctx.status(HttpStatus.NOT_FOUND);
+		}
+	}
+
+	public void createProduct(Context ctx) {
+		Product newSupermarket = ctx.bodyAsClass(Product.class);
+		try {
+			boolean insertedSuccessfully = productDAO.insert(newSupermarket);
+			ctx.status(insertedSuccessfully ? HttpStatus.CREATED : HttpStatus.CONFLICT);
+		} catch (SQLException e) {
+			ctx.status(HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new RuntimeException(e);
 		}
 	}
 

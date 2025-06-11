@@ -6,6 +6,7 @@ import ch.prixio.controllers.ObservationController;
 import ch.prixio.controllers.SupermarketController;
 import ch.prixio.controllers.TopController;
 import io.javalin.Javalin;
+import io.javalin.plugin.bundled.CorsPluginConfig;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -30,23 +31,15 @@ public class Main {
 		var observationController = new ObservationController(connection);
 		var topController = new TopController(connection);
 
-		Javalin app = Javalin.create(config -> {
-			config.bundledPlugins.enableCors(cors -> {
-				cors.addRule(it -> {
-					it.anyHost();
-				});
-			});
-		});
-
-		app.before(ctx -> {
-			ctx.res().setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-			ctx.res().setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-			ctx.res().setHeader("Access-Control-Allow-Headers", "Content-Type");
-			ctx.res().setHeader("Access-Control-Allow-Credentials", "true");
-		});
+		Javalin app = Javalin.create(config ->
+			config.bundledPlugins.enableCors(cors ->
+				cors.addRule(CorsPluginConfig.CorsRule::anyHost)
+			)
+		);
 
 		app.get("/product/{ean}", productController::getProduct)
 			.get("/product/{ean}/with_price_history", productController::getProductWithPriceHistory)
+			.post("/product", productController::createProduct)
 			.post("/record/{ean}", observationController::registerPriceObservation)
 			.get("/top/down", topController::getTopDown)
 			.get("/top/up", topController::getTopUp)

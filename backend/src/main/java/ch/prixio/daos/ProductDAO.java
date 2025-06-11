@@ -17,8 +17,29 @@ public class ProductDAO extends DAO {
 	}
 
 	/**
+	 * Inserts the given product in the database.
+	 *
+	 * @param product a product
+	 * @return true if the product was successfully inserted, false otherwise.
+	 * @throws SQLException if a database access error occurs
+	 */
+	public boolean insert(Product product) throws SQLException {
+		String query = "INSERT INTO product (ean, name, brand, quantity, unit) VALUES (?, ?, ?, ?, ?) ON CONFLICT DO NOTHING;";
+
+		PreparedStatement statement = this.connection.prepareStatement(query);
+		statement.setString(1, product.ean());
+		statement.setString(2, product.name());
+		statement.setString(3, product.brand());
+		statement.setInt(4, product.quantity());
+		statement.setString(5, product.unit().toString());
+
+		int rowsAffected = statement.executeUpdate();
+
+		return rowsAffected == 1;
+	}
+
+	/**
 	 * Fetch a product from the database connection, which is then returned wrapped in an optional.
-	 * The resulting Product object will have an empty observations array.
 	 *
 	 * @param productEan the EAN code of the product
 	 * @return an optional containing a Product object if the requested product is found, and an empty optional otherwise.
